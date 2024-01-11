@@ -1,0 +1,25 @@
+.blog-navbar-brand {
+    width: 150px;
+  }
+  
+  .bg-body-tertiary {
+    color: #F4ECE8;
+    background-color: #F4ECE8 !important;
+    -webkit-box-shadow: 2px 0px 18px 1px rgba(222, 222, 222, 1);
+    -moz-box-shadow: 2px 0px 18px 1px rgba(222, 222, 222, 1);
+    box-shadow: 2px 0px 4px 1px rgba(222, 222, 222, 1);
+  }
+  
+  .blog-navbar-add-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 160px;
+    text-decoration: none;
+  }
+  
+  .login-menu {
+    width: 400px
+  }
+  
+  
