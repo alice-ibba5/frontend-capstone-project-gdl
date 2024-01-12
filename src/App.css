@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 } */
+
+.font-face-CinzelDecorative {
+  font-family: "CinzelDecorative";
+}
+
+.font-face-TanPearl {
+  font-family: "TanPearl";
+}

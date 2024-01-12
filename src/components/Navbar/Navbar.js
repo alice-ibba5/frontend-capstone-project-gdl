@@ -11,7 +11,7 @@ import "./styles.css";
 
 function NavBar() {
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
+    <Navbar expand="lg" className="bg-body-tertiary font-face-CinzelDecorative">
       <Container fluid>
         <Navbar.Brand href="#">
           <img className="blog-navbar-brand" alt="logo" src={logo} />
@@ -46,7 +46,7 @@ function NavBar() {
               className="me-2"
               aria-label="Search"
             />
-            <Button variant="outline-success">Search</Button>
+            <Button variant="outline-dark">Search</Button>
           </Form>
         </Navbar.Collapse>
       </Container>

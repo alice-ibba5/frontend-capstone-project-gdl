@@ -1,6 +1,7 @@
 import "./App.css";
 import NavBar from "./components/Navbar/Navbar.js";
 import HomeSlog from "./components/Homepage-sloggati/HomeSlog.js";
+import HomeLog from "./components/Homepage-loggati/HomeLog.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -9,8 +10,8 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" exact element={<HomeSlog />} />
-        {/*<Route path="/blog/:id" element={<Blog />} />
-        <Route path="/new" element={<NewBlogPost />} />
+        <Route path="/gdl" element={<HomeLog />} />
+        {/*<Route path="/new" element={<NewBlogPost />} />
         <Route path="/register" element={<Registration />} /> */}
       </Routes>
       {/* <Footer /> */}
