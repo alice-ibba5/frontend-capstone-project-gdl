@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Creator from "./Creator.js";
+import "./GdlStyles.css";
 
 const Gdl = (props) => {
   const { bookTitle, cover, user, _id, deadline } = props;

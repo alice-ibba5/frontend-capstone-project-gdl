@@ -43,7 +43,7 @@ const GdlList = () => {
         {gdl.map((gdl, i) => (
           <Col
             key={`item-${i}`}
-            md={4}
+            md={3}
             style={{
               marginBottom: 50,
             }}
