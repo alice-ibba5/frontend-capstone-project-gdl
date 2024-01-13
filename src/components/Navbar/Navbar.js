@@ -1,17 +1,59 @@
-import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import {
+  Button,
+  Container,
+  Navbar,
+  Nav,
+  Form,
+  Col,
+  Image,
+  Row,
+} from "react-bootstrap";
 import logo from "../../assets/gdl-logo.png";
 import "./styles.css";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-// import { Button, Container, Navbar, Nav, Form, NavDropdown, Image, Row } from "react-bootstrap";
+function NavBar({ searchQuery, setSearchQuery }) {
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
-function NavBar() {
+  const isLogged = async () => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedToken = localStorage.getItem("token");
+
+    if (storedUserId) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const userDetails = await response.json();
+          setUser(userDetails);
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+  };
+  useEffect(() => {
+    console.log("useEffect is triggered");
+    isLogged();
+  }, []);
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary font-face-CinzelDecorative">
+    <Navbar
+      expand="lg"
+      className="bg-body-tertiary font-face-CinzelDecorative"
+      style={{ height: "70px" }}
+    >
       <Container fluid>
         <Navbar.Brand href="#">
           <img className="blog-navbar-brand" alt="logo" src={logo} />
@@ -28,15 +70,48 @@ function NavBar() {
             <Nav.Link href="/contatti">Contatti</Nav.Link>
             <Nav.Link href="/nuova-proposta">Proponi un GDL!</Nav.Link>
           </Nav>
+
           <Form className="d-flex">
             <Form.Control
               type="search"
               placeholder="Search"
               className="me-2"
               aria-label="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Button variant="outline-dark">Search</Button>
           </Form>
+
+          {user && isLoggedIn ? (
+            <div className="my-3 mx-3 d-flex">
+              <Row>
+                <Col className="pe-0 align-self-center">
+                  <Link to={`/users/${user?._id}`} className="gdl-link">
+                    <Image
+                      className="blog-user "
+                      src={user?.avatar}
+                      roundedCircle
+                      style={{ width: "30px", height: "30px" }}
+                    />
+                  </Link>
+                </Col>
+              </Row>
+              <Button
+                variant="danger"
+                className="my-3 mx-3"
+                onClick={() => {
+                  navigate("/");
+                  localStorage.clear();
+                  setUser(false);
+                  setIsLoggedIn(false);
+                }}
+              >
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <div></div>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

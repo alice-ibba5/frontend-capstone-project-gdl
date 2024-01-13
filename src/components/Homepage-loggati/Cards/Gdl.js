@@ -8,7 +8,7 @@ const Gdl = (props) => {
   const { bookTitle, cover, user, _id, deadline } = props;
   return (
     <Link to={`/gdl/${_id}`} className="gdl-link">
-      <Card className="gdl-card" style={{ width: "200px" }}>
+      <Card className="gdl-card" style={{ width: "200px", height: "550px" }}>
         <Card.Img
           variant="top"
           src={cover}

@@ -1,9 +1,11 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Col, Row, Container } from "react-bootstrap";
-import Gdl from "./Gdl.js";
+import Gdl from "./Cards/Gdl.js";
+import Spinner from "react-bootstrap/Spinner";
+import "./HomeLogStyles.css";
 
-const GdlList = () => {
+const GdlList = ({ searchQuery }) => {
   const [gdl, setGdl] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,6 +24,7 @@ const GdlList = () => {
         if (response.ok) {
           let data = await response.json();
           setGdl(data);
+          console.log(data);
           setLoading(false);
         } else {
           console.log("error");
@@ -32,26 +35,39 @@ const GdlList = () => {
         setLoading(false);
       }
     };
-    if (gdl.length == 0) {
+    if (gdl.length === 0) {
       getGdl();
     }
-  }, [gdl]);
+  }, [gdl.length]);
 
   return (
     <Container>
-      <Row className="mt-3">
-        {gdl.map((gdl, i) => (
-          <Col
-            key={`item-${i}`}
-            md={3}
-            style={{
-              marginBottom: 50,
-            }}
-          >
-            <Gdl key={gdl.bookTitle} {...gdl} loading={loading} />
-          </Col>
-        ))}
-      </Row>
+      {loading ? (
+        <Spinner animation="grow" variant="dark" className="spinner" />
+      ) : (
+        <Row className="mt-3">
+          {gdl
+            ?.filter((b) =>
+              b.bookTitle?.toLowerCase().includes(searchQuery?.toLowerCase())
+            )
+            .map((gdl, i) => {
+              return (
+                <Col
+                  key={`item-${i}`}
+                  xl={2}
+                  lg={3}
+                  md={4}
+                  sm={6}
+                  style={{
+                    marginBottom: 50,
+                  }}
+                >
+                  <Gdl key={gdl.bookTitle} {...gdl} />
+                </Col>
+              );
+            })}
+        </Row>
+      )}
     </Container>
   );
 };
