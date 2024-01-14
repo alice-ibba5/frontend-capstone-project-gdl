@@ -37,6 +37,9 @@ function NavBar({ searchQuery, setSearchQuery }) {
           const userDetails = await response.json();
           setUser(userDetails);
           setIsLoggedIn(true);
+        } else {
+          localStorage.clear();
+          window.location.href = "/";
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -52,6 +55,7 @@ function NavBar({ searchQuery, setSearchQuery }) {
     <Navbar
       expand="lg"
       className="bg-body-tertiary font-face-CinzelDecorative"
+      sticky="top"
       style={{ height: "70px" }}
     >
       <Container fluid>

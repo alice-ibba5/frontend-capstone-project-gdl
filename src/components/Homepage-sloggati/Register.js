@@ -76,6 +76,10 @@ function Register() {
             theme: "dark",
           });
 
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 2000);
+
           const fileDataResponse = await fileResponse.json();
           console.log(fileDataResponse);
 
