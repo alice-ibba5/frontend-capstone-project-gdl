@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Col, Row } from "react-bootstrap";
+import { Container, Col, Row, Image } from "react-bootstrap";
 import Calendar from "react-calendar";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -161,6 +161,42 @@ const CalendarElement = () => {
     setEvents(updated_Events);
   };
 
+  const deleteEvent = async () => {
+    try {
+      let response = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/events/${selectedEvent._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        toast("Event deleted successfully!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+
+        setTimeout(() => {
+          window.location.href = `/gdl/${id}`;
+        }, 2000);
+      } else {
+        toast.error("Something went wrong!", {
+          position: toast.POSITION.TOP_LEFT,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const ShowEventDetails = (event) => {
     setSelectedEvent(event);
   };
@@ -235,7 +271,7 @@ const CalendarElement = () => {
                             </button>{" "}
                             <button
                               className="delete-btn"
-                              onClick={() => Delete_Event_Fun(id)}
+                              onClick={() => deleteEvent(id)}
                             >
                               Delete Event{" "}
                             </button>{" "}
@@ -258,6 +294,12 @@ const CalendarElement = () => {
                             Created by:{" "}
                           </h6>{" "}
                           <p>
+                            <Image
+                              src={selectedEvent.user.avatar}
+                              style={{ width: "30px" }}
+                              roundedCircle
+                              className="me-2"
+                            />
                             {selectedEvent.user.name}{" "}
                             {selectedEvent.user.surname}
                           </p>

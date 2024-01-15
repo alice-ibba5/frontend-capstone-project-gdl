@@ -151,16 +151,16 @@ const GdlDetails = ({}) => {
     }
   }, []);
 
-  const deleteComment = (commentToDeleteId) => {
+  const deleteComment = async (commentToDeleteId) => {
     if (commentToDeleteId) {
-      fetch(
+      let response = await fetch(
         `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/comments/${commentToDeleteId}`,
         {
           method: "DELETE",
         }
       )
-        .then((r) => {
-          if (r.ok) {
+        .then((response) => {
+          if (response.ok) {
             toast("Comment deleted successfully!", {
               position: "bottom-right",
               autoClose: 5000,
