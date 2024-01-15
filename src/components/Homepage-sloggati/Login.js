@@ -103,31 +103,23 @@ function Login() {
     if (token && userId) {
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
-    }
-  };
 
-  const isLogged = async () => {
-    const storedUserId = localStorage.getItem("userId");
-    const storedToken = localStorage.getItem("token");
-
-    if (storedUserId) {
+      // Effettua una richiesta al backend per ottenere le informazioni dell'utente
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+        const userResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${userId}`,
           {
             headers: {
-              Authorization: `Bearer ${storedToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        if (response.ok) {
-          const userDetails = await response.json();
+        if (userResponse.ok) {
+          const userDetails = await userResponse.json();
           const email = userDetails.email;
-          setUser(userDetails);
-          setIsLoggedIn(true);
 
-          // Chiamata per verificare se l'utente è già nel database
+          // Ora puoi utilizzare l'email per la chiamata checkUserExistence
           const checkUserResponse = await fetch(
             `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/checkUserExistence`,
             {
@@ -176,7 +168,7 @@ function Login() {
                 } else {
                   console.error(
                     "Failed to send welcome email:",
-                    response.statusText
+                    welcomeEmailResponse.statusText
                   );
                 }
               } catch (error) {
@@ -186,23 +178,49 @@ function Login() {
           }
         }
       } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    }
+  };
+
+  const isLogged = async () => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedToken = localStorage.getItem("token");
+
+    if (storedUserId) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const userDetails = await response.json();
+          const email = userDetails.email;
+          setUser(userDetails);
+          setIsLoggedIn(true);
+          toast("You are logged in with Google!!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          setTimeout(() => {
+            window.location.href = "/gdl";
+          }, 2000);
+        }
+      } catch (error) {
         console.error("Error fetching user data:", error);
       }
-
-      toast("You are logged in with Google!!", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-
-      setTimeout(() => {
-        window.location.href = "/gdl";
-      }, 2000);
     }
   };
 

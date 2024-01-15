@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Container, Col, Row } from "react-bootstrap";
 import Calendar from "react-calendar";
+import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import "../../../node_modules/react-calendar/dist/Calendar.css";
 import "./CalendarStyles.css";
 
@@ -8,45 +10,159 @@ const CalendarElement = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [eventName, setEventName] = useState("");
   const [events, setEvents] = useState([]);
+  const [user, setUser] = useState("");
+  const [gdl, setGdl] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const { id } = useParams();
+  const storedUserId = localStorage.getItem("userId");
 
-  const Date_Click_Fun = (date) => {
-    setSelectedDate(date);
-  };
+  const getEvents = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/events`
+      );
 
-  const Event_Data_Update = (event) => {
-    setEventName(event.target.value);
-  };
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-  const Create_Event_Fun = () => {
-    if (selectedDate && eventName) {
-      const newEvent = {
-        id: new Date().getTime(),
-        date: selectedDate,
-        title: eventName,
-      };
-      setEvents([...events, newEvent]);
-      setSelectedDate(new Date());
-      setEventName("");
-      setSelectedDate(newEvent.date);
+      const data = await response.json();
+      setEvents(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const Update_Event_Fun = (eventId, newName) => {
-    const updated_Events = events.map((event) => {
-      if (event.id === eventId) {
-        return {
-          ...event,
-          title: newName,
-        };
+  useEffect(() => {
+    getEvents();
+  }, []);
+
+  const Date_Click_Fun = (date) => {
+    setSelectedDate(date);
+
+    // Trova l'evento corrispondente alla data selezionata
+    const selectedEventForDate = events.find(
+      (event) => new Date(event.date).toDateString() === date.toDateString()
+    );
+
+    // Imposta l'evento selezionato
+    setSelectedEvent(selectedEventForDate || null);
+  };
+
+  const Event_Data_Update = (event) => {
+    event.preventDefault();
+    setEventName(event.target.value);
+  };
+
+  const Create_Event_Fun = async () => {
+    if (selectedDate && eventName) {
+      const newEvent = {
+        id: new Date().getTime(),
+        gdl: id,
+        user: storedUserId,
+        date: selectedDate,
+        title: eventName,
+      };
+      try {
+        let response = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/events`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify(newEvent),
+          }
+        );
+
+        if (response.ok) {
+          setEvents([...events, newEvent]);
+          setSelectedDate(new Date());
+          setEventName("");
+          setSelectedDate(newEvent.date);
+          setUser(storedUserId);
+          setGdl(id);
+
+          toast("Event added successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          // setTimeout(() => {
+          //   window.location.href = `/gdl/${id}`;
+          // }, 2000);
+        }
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
-      return event;
-    });
-    setEvents(updated_Events);
+    }
+  };
+
+  const changeEvent = async () => {
+    const newTitle = prompt("Enter new title");
+    if (newTitle) {
+      const formData = {
+        title: newTitle,
+      };
+
+      try {
+        console.log("Trying to update event:", selectedEvent._id);
+        let response = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/events/${selectedEvent._id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+        if (response.ok) {
+          setEventName(newTitle);
+          toast("Event modified successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setTimeout(() => {
+            window.location.href = `/gdl/${id}`;
+          }, 2000);
+        } else {
+          toast.error("Something went wrong!", {
+            position: toast.POSITION.TOP_LEFT,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const Delete_Event_Fun = (eventId) => {
     const updated_Events = events.filter((event) => event.id !== eventId);
     setEvents(updated_Events);
+  };
+
+  const ShowEventDetails = (event) => {
+    setSelectedEvent(event);
   };
 
   return (
@@ -62,22 +178,22 @@ const CalendarElement = () => {
               value={selectedDate}
               onClickDay={Date_Click_Fun}
               tileClassName={({ date }) =>
-                selectedDate &&
-                date.toDateString() === selectedDate.toDateString()
-                  ? "selected"
-                  : events.some(
-                      (event) =>
-                        event.date.toDateString() === date.toDateString()
-                    )
+                events.some((event) => {
+                  const eventDate = new Date(event.date);
+                  return (
+                    eventDate instanceof Date &&
+                    eventDate.toDateString() === date.toDateString()
+                  );
+                })
                   ? "event-marked"
                   : ""
               }
             />{" "}
           </Col>
-          <div className="event-container">
+          <Row className="event-container d-flex justify-content-between">
             {" "}
             {selectedDate && (
-              <div className="event-form">
+              <Col lg={4} className="event-form">
                 <h4 className="font-face-CinzelDecorative mt-3">
                   {" "}
                   Crea un evento{" "}
@@ -92,55 +208,67 @@ const CalendarElement = () => {
                 <button className="create-btn" onClick={Create_Event_Fun}>
                   Add Event{" "}
                 </button>{" "}
-              </div>
+              </Col>
             )}
             {events.length > 0 && selectedDate && (
-              <div className="event-list">
-                <h4 className="font-face-CinzelDecorative mt-3">
-                  {" "}
-                  Lista degli eventi creati{" "}
-                </h4>{" "}
-                <div className="event-cards">
-                  {" "}
-                  {events.map((event) =>
-                    event.date.toDateString() ===
-                    selectedDate.toDateString() ? (
-                      <div key={event.id} className="event-card">
+              <Col lg={4} className="event-list">
+                {" "}
+                {selectedEvent && (
+                  <>
+                    <h4 className="font-face-CinzelDecorative mt-3">
+                      {" "}
+                      Eventi in programma:{" "}
+                    </h4>{" "}
+                    <div className="event-cards">
+                      <div key={id} className="event-card">
                         <div className="event-card-header">
                           <span className="event-date">
                             {" "}
-                            {event.date.toDateString()}{" "}
+                            {/* {new Date(selectedEvent.date).toDateString()}{" "} */}
                           </span>{" "}
                           <div className="event-actions">
                             <button
                               className="update-btn"
-                              onClick={() =>
-                                Update_Event_Fun(
-                                  event.id,
-                                  prompt("ENTER NEW TITLE")
-                                )
-                              }
+                              onClick={() => changeEvent(eventName)}
                             >
                               Update Event{" "}
                             </button>{" "}
                             <button
                               className="delete-btn"
-                              onClick={() => Delete_Event_Fun(event.id)}
+                              onClick={() => Delete_Event_Fun(id)}
                             >
                               Delete Event{" "}
+                            </button>{" "}
+                            <button
+                              className="add-btn"
+                              //onClick={() => Delete_Event_Fun(id)}
+                            >
+                              Add Event to your dashboard{" "}
                             </button>{" "}
                           </div>{" "}
                         </div>{" "}
                         <div className="event-card-body">
-                          <p className="event-title"> {event.title} </p>{" "}
+                          <h5 className="font-face-CinzelDecorative">
+                            Event title:{" "}
+                          </h5>{" "}
+                          <p>{selectedEvent.title}</p>
+                        </div>{" "}
+                        <div className="event-card-body">
+                          <h6 className="font-face-CinzelDecorative">
+                            Created by:{" "}
+                          </h6>{" "}
+                          <p>
+                            {selectedEvent.user.name}{" "}
+                            {selectedEvent.user.surname}
+                          </p>
                         </div>{" "}
                       </div>
-                    ) : null
-                  )}{" "}
-                </div>{" "}
-              </div>
+                    </div>
+                  </>
+                )}{" "}
+              </Col>
             )}{" "}
-          </div>{" "}
+          </Row>{" "}
         </Row>{" "}
       </Container>
     </>

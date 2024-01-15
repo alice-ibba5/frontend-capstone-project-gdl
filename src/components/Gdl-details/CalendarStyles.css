@@ -218,9 +218,7 @@
     background-color: #ff267f; 
 } 
   
-.event-list { 
-    margin-top: 20px; 
-} 
+
   
 .event-cards { 
     display: flex; 
@@ -261,7 +259,8 @@
 } 
   
 .update-btn, 
-.delete-btn { 
+.delete-btn,
+.add-btn { 
     padding: 8px 12px; 
     margin-left: 5px; 
     background-color: #007bff; 

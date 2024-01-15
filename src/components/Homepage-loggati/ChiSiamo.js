@@ -12,9 +12,9 @@ function ChiSiamo() {
         <Col>
           <div className="paragrafo">
             <p className="mt-5">
-              Benvenuti su GDLove - il luogo ideale per gli amanti dei libri che
-              desiderano connettersi, esplorare nuove letture e partecipare a
-              entusiasmanti discussioni letterarie. Siamo un team appassionato
+              Benvenuti su ✨GDLove🔮 - il luogo ideale per gli amanti dei libri
+              che desiderano connettersi, esplorare nuove letture e partecipare
+              a entusiasmanti discussioni letterarie. Siamo un team appassionato
               di lettori e sviluppatori che si sono uniti per creare
               un'esperienza coinvolgente e interattiva per tutti coloro che
               amano immergersi nel mondo della letteratura.

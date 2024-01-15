@@ -136,7 +136,7 @@ const GdlDetails = ({}) => {
   };
 
   useEffect(() => {
-    // Recupera il valore di 'authorId' dal localStorage al montaggio del componente
+    // Recupera il valore di 'userId' dal localStorage al montaggio del componente
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
       setUser(storedUserId);

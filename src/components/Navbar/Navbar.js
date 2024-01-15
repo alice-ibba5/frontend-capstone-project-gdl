@@ -12,6 +12,7 @@ import logo from "../../assets/gdl-logo.png";
 import "./styles.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 function NavBar({ searchQuery, setSearchQuery }) {
   const [user, setUser] = useState(null);
@@ -40,6 +41,16 @@ function NavBar({ searchQuery, setSearchQuery }) {
         } else {
           localStorage.clear();
           window.location.href = "/";
+          toast("You need to login again!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -118,6 +129,18 @@ function NavBar({ searchQuery, setSearchQuery }) {
           )}
         </Navbar.Collapse>
       </Container>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </Navbar>
   );
 }
