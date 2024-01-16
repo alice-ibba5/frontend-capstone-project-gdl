@@ -11,6 +11,7 @@ const CalendarElement = () => {
   const [eventName, setEventName] = useState("");
   const [events, setEvents] = useState([]);
   const [user, setUser] = useState("");
+  const [eventId, setEventId] = useState("");
   const [gdl, setGdl] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -201,6 +202,51 @@ const CalendarElement = () => {
     setSelectedEvent(event);
   };
 
+  const addEventToDashboard = async () => {
+    setLoading(true);
+    if (selectedEvent) {
+      const data = {
+        eventId: selectedEvent._id,
+      };
+      console.log("Data to be sent:", data);
+      try {
+        let textResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "PUT",
+            body: JSON.stringify(data),
+          }
+        );
+
+        if (textResponse.ok) {
+          setEventId(data);
+
+          toast("Event added to your dashboard successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          // setTimeout(() => {
+          //   window.location.href = `/gdl/${id}`;
+          // }, 2000);
+        }
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <>
       <h4 className="font-face-CinzelDecorative mt-5">
@@ -234,7 +280,12 @@ const CalendarElement = () => {
                   {" "}
                   Crea un evento{" "}
                 </h4>{" "}
-                <p> Selected Date: {selectedDate.toDateString()} </p>{" "}
+                <p>
+                  {" "}
+                  Selected Date:{" "}
+                  {selectedDate instanceof Date &&
+                    selectedDate.toDateString()}{" "}
+                </p>{" "}
                 <input
                   type="text"
                   placeholder="Event Name"
@@ -277,7 +328,7 @@ const CalendarElement = () => {
                             </button>{" "}
                             <button
                               className="add-btn"
-                              //onClick={() => Delete_Event_Fun(id)}
+                              onClick={() => addEventToDashboard(id)}
                             >
                               Add Event to your dashboard{" "}
                             </button>{" "}
