@@ -17,6 +17,7 @@ const CalendarElement = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const { id } = useParams();
   const storedUserId = localStorage.getItem("userId");
+  const storedUserToken = localStorage.getItem("token");
 
   const getEvents = async () => {
     try {
@@ -200,29 +201,48 @@ const CalendarElement = () => {
 
   const ShowEventDetails = (event) => {
     setSelectedEvent(event);
+    addEventToDashboard(); // Chiamare la funzione qui dopo aver impostato selectedEvent
   };
 
   const addEventToDashboard = async () => {
     setLoading(true);
-    if (selectedEvent) {
-      const data = {
-        eventId: selectedEvent._id,
-      };
-      console.log("Data to be sent:", data);
-      try {
-        let textResponse = await fetch(
+
+    try {
+      // Ottieni gli eventi dell'utente dal backend
+      const userResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + storedUserToken,
+          },
+        }
+      );
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        const userEvents = userData.events || []; // Array degli eventi dell'utente
+
+        // Aggiungi l'evento all'array degli eventi dell'utente senza sostituire l'array esistente
+        const updatedUserEvents = [...userEvents, selectedEvent];
+
+        // Invia la richiesta di aggiornamento degli eventi dell'utente al backend
+        const updateResponse = await fetch(
           `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
           {
             headers: {
               "Content-Type": "application/json",
+              Authorization: "Bearer " + storedUserToken,
             },
             method: "PUT",
-            body: JSON.stringify(data),
+            body: JSON.stringify({ events: updatedUserEvents }),
           }
         );
 
-        if (textResponse.ok) {
-          setEventId(data);
+        if (updateResponse.ok) {
+          // Aggiungi l'evento all'array events senza sostituire l'array esistente
+          setEvents((prevEvents) => [...prevEvents, selectedEvent]);
+
+          setEventId(selectedEvent._id);
 
           toast("Event added to your dashboard successfully!", {
             position: "bottom-right",
@@ -234,16 +254,20 @@ const CalendarElement = () => {
             progress: undefined,
             theme: "dark",
           });
-
-          // setTimeout(() => {
-          //   window.location.href = `/gdl/${id}`;
-          // }, 2000);
+        } else {
+          toast.error("Something went wrong while updating user events!", {
+            position: toast.POSITION.TOP_LEFT,
+          });
         }
-      } catch (error) {
-        console.log("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error("Something went wrong while fetching user data!", {
+          position: toast.POSITION.TOP_LEFT,
+        });
       }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
