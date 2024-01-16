@@ -62,7 +62,6 @@ const CalendarElement = () => {
   const Create_Event_Fun = async () => {
     if (selectedDate && eventName) {
       const newEvent = {
-        id: new Date().getTime(),
         gdl: id,
         user: storedUserId,
         date: selectedDate,
@@ -99,9 +98,12 @@ const CalendarElement = () => {
             theme: "dark",
           });
 
-          // setTimeout(() => {
-          //   window.location.href = `/gdl/${id}`;
-          // }, 2000);
+          setTimeout(() => {
+            window.location.href = `/gdl/${id}`;
+          }, 2000);
+        } else {
+          // Logga la risposta del backend in caso di errore
+          console.error("Error creating event. Backend response:", response);
         }
       } catch (error) {
         console.log("Error fetching data:", error);
@@ -220,27 +222,36 @@ const CalendarElement = () => {
 
       if (userResponse.ok) {
         const userData = await userResponse.json();
-        const userEvents = userData.events || []; // Array degli eventi dell'utente
+        const userEvents = userData.eventId || []; // Array degli eventi dell'utente
+        console.log(userEvents);
 
-        // Aggiungi l'evento all'array degli eventi dell'utente senza sostituire l'array esistente
-        const updatedUserEvents = [...userEvents, selectedEvent];
-
-        // Invia la richiesta di aggiornamento degli eventi dell'utente al backend
-        const updateResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + storedUserToken,
-            },
-            method: "PUT",
-            body: JSON.stringify({ events: updatedUserEvents }),
-          }
+        // Verifica se l'evento è già presente nell'array degli eventi dell'utente
+        const isEventAlreadyAdded = userEvents.some(
+          (event) => event._id === selectedEvent._id
         );
+        console.log(isEventAlreadyAdded);
+        if (!isEventAlreadyAdded) {
+          // Aggiungi l'evento all'array degli eventi dell'utente
+          const newEvents = [...userEvents];
+          newEvents.push(selectedEvent);
 
-        if (updateResponse.ok) {
-          // Aggiungi l'evento all'array events senza sostituire l'array esistente
-          setEvents((prevEvents) => [...prevEvents, selectedEvent]);
+          // Invia la richiesta di aggiornamento degli eventi dell'utente al backend
+          const updateResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + storedUserToken,
+              },
+              method: "PUT",
+              body: JSON.stringify({ eventId: newEvents }),
+            }
+          );
+
+          if (updateResponse.ok) {
+            // Aggiungi l'evento all'array events utilizzando push
+            setEvents(newEvents);
+          }
 
           setEventId(selectedEvent._id);
 
@@ -260,8 +271,16 @@ const CalendarElement = () => {
           });
         }
       } else {
-        toast.error("Something went wrong while fetching user data!", {
-          position: toast.POSITION.TOP_LEFT,
+        // L'evento è già presente nell'array degli eventi dell'utente
+        toast.warn("Event is already added to your dashboard!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
         });
       }
     } catch (error) {

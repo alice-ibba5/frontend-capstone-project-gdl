@@ -38,6 +38,7 @@ const GdlDetails = ({}) => {
   const [commentToDeleteId, setCommentToDeleteId] = useState(null);
   const [editingComment, setEditingComment] = useState(null);
   const [editingCommentText, setEditingCommentText] = useState("");
+  const [gdlId, setGdlId] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -239,6 +240,87 @@ const GdlDetails = ({}) => {
     setEditingComment(null);
   };
 
+  const partecipaAlGdl = async () => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedUserToken = localStorage.getItem("token");
+    setLoading(true);
+
+    try {
+      // Ottieni gli eventi dell'utente dal backend
+      const userResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + storedUserToken,
+          },
+        }
+      );
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        const userGdl = userData.gdlId || []; // Array degli eventi dell'utente
+        console.log(userGdl);
+
+        // Verifica se l'evento è già presente nell'array degli eventi dell'utente
+        const isGdlAlreadyAdded = userGdl.some((userGdl) => userGdl === id);
+        console.log(isGdlAlreadyAdded);
+        if (!isGdlAlreadyAdded) {
+          // Aggiungi l'evento all'array degli eventi dell'utente
+          const newGdl = [...userGdl];
+          newGdl.push(id);
+
+          // Invia la richiesta di aggiornamento degli eventi dell'utente al backend
+          const updateResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + storedUserToken,
+              },
+              method: "PUT",
+              body: JSON.stringify({ gdlId: newGdl }),
+            }
+          );
+
+          if (updateResponse.ok) {
+            // Aggiungi l'evento all'array events utilizzando push
+            setGdl(newGdl);
+          }
+
+          setGdlId(id);
+
+          toast("Gdl added to your dashboard successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        } else {
+          // L'evento è già presente nell'array degli eventi dell'utente
+          toast.warn("Gdl is already added to your dashboard!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      } else {
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -280,6 +362,13 @@ const GdlDetails = ({}) => {
                     {/* <BlogLike defaultLikes={["123"]} onChange={console.log} /> */}
                   </div>
                 </div>
+                <Button
+                  variant="dark"
+                  className="font-face-CinzelDecorative align-self-center"
+                  onClick={() => partecipaAlGdl(id)}
+                >
+                  Partecipa al GDL!
+                </Button>
               </div>
             </Col>
           </Container>
