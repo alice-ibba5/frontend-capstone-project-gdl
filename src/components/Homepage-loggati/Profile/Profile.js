@@ -1,5 +1,6 @@
-import { Container, Image, Spinner, Col, Button, Row } from "react-bootstrap";
+import { Container, Image, Spinner, Col } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import CalendarElement from "../Profile/CalendarXProfile/CalendarXprofile.js";
 import "./styles.css";
 
@@ -56,35 +57,38 @@ const Profile = () => {
           </h1>
 
           <Container className="p-0 d-flex">
-            <Col lg={6} className="mt-5">
+            <Col lg={6} className="mt-4">
               <Image
                 className="avatar align-item-center"
                 src={user.avatar}
                 fluid
                 style={{ width: "200px" }}
               />
-            </Col>
-            <Col lg={6} className="mt-5">
-              <h5 className="font-face-CinzelDecorative">Email: </h5>
+              <h5 className="font-face-CinzelDecorative mt-3">Email: </h5>
               <p>{user.email}</p>
-              <h5 className="font-face-CinzelDecorative">Data di nascita: </h5>
-              <p>{user.dateOfBirth}</p>
             </Col>
+            <Col lg={6} className="mt-5"></Col>
           </Container>
-          <Container className="container-gdl">
-            <h4 className="font-face-CinzelDecorative my-5">
+          <hr></hr>
+          <Container className="container-gdl p-0">
+            <h4 className="font-face-CinzelDecorative my-3">
               GDL a cui partecipi:{" "}
             </h4>
-            <Container className="d-flex flex-row">
+            <Container className="d-flex flex-row flex-wrap">
               {user?.gdlId?.map((gdl, index) => (
                 <>
                   <Col lg={3} className="d-flex flex-column">
-                    <Image
-                      className="cover align-self-center mb-3"
-                      src={gdl.cover}
-                      fluid
-                      style={{ width: "100px" }}
-                    />
+                    <Link
+                      to={`/gdl/${gdl?._id}`}
+                      className="gdl-link align-self-center"
+                    >
+                      <Image
+                        className="cover mb-3"
+                        src={gdl.cover}
+                        fluid
+                        style={{ width: "100px" }}
+                      />
+                    </Link>
                     <p
                       className="align-self-center font-face-CinzelDecorative"
                       key={index}
@@ -96,6 +100,7 @@ const Profile = () => {
               ))}
             </Container>
           </Container>
+          <hr></hr>
 
           {/* CALENDAR  */}
           <CalendarElement />

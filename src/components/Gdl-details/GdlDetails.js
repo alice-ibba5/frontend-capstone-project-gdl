@@ -39,6 +39,7 @@ const GdlDetails = ({}) => {
   const [editingComment, setEditingComment] = useState(null);
   const [editingCommentText, setEditingCommentText] = useState("");
   const [gdlId, setGdlId] = useState("");
+  const [userId, setUserId] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -246,7 +247,7 @@ const GdlDetails = ({}) => {
     setLoading(true);
 
     try {
-      // Ottieni gli eventi dell'utente dal backend
+      // Ottieni i gdl dell'utente dal backend
       const userResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
         {
@@ -258,18 +259,31 @@ const GdlDetails = ({}) => {
 
       if (userResponse.ok) {
         const userData = await userResponse.json();
-        const userGdl = userData.gdlId || []; // Array degli eventi dell'utente
+        const userGdl = userData.gdlId || []; // Array dei gdl dell'utente
         console.log(userGdl);
 
-        // Verifica se l'evento è già presente nell'array degli eventi dell'utente
-        const isGdlAlreadyAdded = userGdl.some((userGdl) => userGdl === id);
+        // Verifica se il gdl è già presente nell'array dei gdl dell'utente
+        let isGdlAlreadyAdded = false;
+
+        for (const userObj of userGdl) {
+          for (const key in userObj) {
+            if (userObj.hasOwnProperty(key) && userObj[key] === id) {
+              isGdlAlreadyAdded = true;
+              break;
+            }
+          }
+
+          if (isGdlAlreadyAdded) {
+            break;
+          }
+        }
         console.log(isGdlAlreadyAdded);
         if (!isGdlAlreadyAdded) {
-          // Aggiungi l'evento all'array degli eventi dell'utente
+          // Aggiungi il gdl all'array dei gdl dell'utente
           const newGdl = [...userGdl];
           newGdl.push(id);
 
-          // Invia la richiesta di aggiornamento degli eventi dell'utente al backend
+          // Invia la richiesta di aggiornamento dei gdl dell'utente al backend
           const updateResponse = await fetch(
             `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
             {
@@ -283,7 +297,7 @@ const GdlDetails = ({}) => {
           );
 
           if (updateResponse.ok) {
-            // Aggiungi l'evento all'array events utilizzando push
+            // Aggiungi il gdl all'array events utilizzando push
             setGdl(newGdl);
           }
 
@@ -300,7 +314,7 @@ const GdlDetails = ({}) => {
             theme: "dark",
           });
         } else {
-          // L'evento è già presente nell'array degli eventi dell'utente
+          // Il gdl è già presente nell'array dei gdl dell'utente
           toast.warn("Gdl is already added to your dashboard!", {
             position: "bottom-right",
             autoClose: 5000,
@@ -314,6 +328,96 @@ const GdlDetails = ({}) => {
         }
       } else {
       }
+
+      /*INIZIA PROVA AGGIUNTA UTENTE CHE PARTECIPA AL GDL */
+      // Ottieni gli utenti che partecipano al gdl dal backend
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`
+      );
+
+      if (response.ok) {
+        const gdlData = await response.json();
+        console.log(gdlData);
+        const gdlUser = gdlData.userId || []; // Array dei gdl dell'utente
+        console.log(gdlUser);
+
+        // Verifica se l'utente è già presente nell'array degli utenti del gdl
+        let isUserAlreadyAdded = false;
+
+        for (const userObj of gdlUser) {
+          for (const key in userObj) {
+            if (userObj.hasOwnProperty(key) && userObj[key] === storedUserId) {
+              isUserAlreadyAdded = true;
+              break;
+            }
+          }
+
+          if (isUserAlreadyAdded) {
+            break;
+          }
+        }
+
+        console.log("Type of storedUserId:", typeof storedUserId);
+        console.log("Type of gdlUser:", gdlUser);
+
+        console.log("isUserAlreadyAdded is:" + isUserAlreadyAdded);
+        if (!isUserAlreadyAdded) {
+          // Aggiungi l'utente all'array degli utenti del gdl
+          const newUser = [...gdlUser];
+          newUser.push(storedUserId);
+
+          console.log("Before update - gdlUser:", gdlUser);
+          console.log("Adding user:", storedUserId);
+
+          // Invia la richiesta di aggiornamento degli utenti del gdl al backend
+          const updatedResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              method: "PUT",
+              body: JSON.stringify({ userId: newUser }),
+            }
+          );
+
+          if (updatedResponse.ok) {
+            // Aggiungi il gdl all'array events utilizzando push
+            setUser(newUser);
+          }
+
+          setUserId(storedUserId);
+
+          toast("User added to the gdl dashboard successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          setTimeout(() => {
+            window.location.href = `/gdl/${id}`;
+          }, 2000);
+        } else {
+          // L'utente è già presente nell'array dei gdl dell'utente
+          toast.warn("User is already added to the gdl dashboard!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      } else {
+      }
+      /*FINE PROVA */
     } catch (error) {
       console.log("Error fetching data:", error);
     } finally {
@@ -371,6 +475,32 @@ const GdlDetails = ({}) => {
                 </Button>
               </div>
             </Col>
+          </Container>
+
+          <Container className="p-0">
+            <h4 className="font-face-CinzelDecorative mt-5">
+              Utenti che partecipano:
+            </h4>
+            <Container className="d-flex flex-row flex-wrap">
+              {gdlGet?.userId?.map((user, index) => (
+                <>
+                  <Col lg={2} className="d-flex flex-column">
+                    <Image
+                      className="cover align-self-center my-3"
+                      src={user.avatar}
+                      fluid
+                      style={{ width: "100px" }}
+                    />
+                    <p
+                      className="align-self-center font-face-CinzelDecorative"
+                      key={index}
+                    >
+                      {user.name} {user.surname}
+                    </p>
+                  </Col>
+                </>
+              ))}
+            </Container>
           </Container>
 
           {/* CALENDAR  */}

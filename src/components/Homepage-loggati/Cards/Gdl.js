@@ -5,7 +5,7 @@ import Creator from "./Creator.js";
 import "./GdlStyles.css";
 
 const Gdl = (props) => {
-  const { bookTitle, cover, user, _id, deadline } = props;
+  const { bookTitle, cover, user, _id, deadline, userId } = props;
   return (
     <Link to={`/gdl/${_id}`} className="gdl-link">
       <Card className="gdl-card" style={{ width: "200px", height: "550px" }}>
@@ -20,6 +20,9 @@ const Gdl = (props) => {
             {bookTitle}
           </Card.Title>
           <p>Deadline: {deadline}</p>
+          <p>
+            N° partecipanti: <b>{userId.length}</b>
+          </p>
         </Card.Body>
         <Card.Footer>
           <Creator {...user} />

@@ -73,100 +73,14 @@ const CalendarElement = () => {
     setEventName(event.target.value);
   };
 
-  const changeEvent = async () => {
-    const newTitle = prompt("Enter new title");
-    if (newTitle) {
-      const formData = {
-        title: newTitle,
-      };
-
-      try {
-        console.log("Trying to update event:", selectedEvent._id);
-        let response = await fetch(
-          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/events/${selectedEvent._id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          }
-        );
-        if (response.ok) {
-          setEventName(newTitle);
-          toast("Event modified successfully!", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          setTimeout(() => {
-            window.location.href = `/gdl/${id}`;
-          }, 2000);
-        } else {
-          toast.error("Something went wrong!", {
-            position: toast.POSITION.TOP_LEFT,
-          });
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
   const Delete_Event_Fun = (eventId) => {
     const updated_Events = events.filter((event) => event.id !== eventId);
     setEvents(updated_Events);
   };
 
   const deleteEvent = async () => {
-    try {
-      let response = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/events/${selectedEvent._id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (response.ok) {
-        toast("Event deleted successfully!", {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-
-        setTimeout(() => {
-          window.location.href = `/gdl/${id}`;
-        }, 2000);
-      } else {
-        toast.error("Something went wrong!", {
-          position: toast.POSITION.TOP_LEFT,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const ShowEventDetails = (event) => {
-    setSelectedEvent(event);
-    addEventToDashboard(); // Chiamare la funzione qui dopo aver impostato selectedEvent
-  };
-
-  const addEventToDashboard = async () => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedUserToken = localStorage.getItem("token");
     setLoading(true);
 
     try {
@@ -185,54 +99,31 @@ const CalendarElement = () => {
         const userEvents = userData.eventId || []; // Array degli eventi dell'utente
         console.log(userEvents);
 
-        // Verifica se l'evento è già presente nell'array degli eventi dell'utente
-        const isEventAlreadyAdded = userEvents.some(
-          (event) => event._id === selectedEvent._id
-        );
-        console.log(isEventAlreadyAdded);
-        if (!isEventAlreadyAdded) {
-          // Aggiungi l'evento all'array degli eventi dell'utente
-          const newEvents = [...userEvents];
-          newEvents.push(selectedEvent);
+        // Elimina l'evento dall'array degli eventi dell'utente
+        const deletedEvent = [...userEvents];
+        deletedEvent.splice(eventId);
 
-          // Invia la richiesta di aggiornamento degli eventi dell'utente al backend
-          const updateResponse = await fetch(
-            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + storedUserToken,
-              },
-              method: "PUT",
-              body: JSON.stringify({ eventId: newEvents }),
-            }
-          );
-
-          if (updateResponse.ok) {
-            // Aggiungi l'evento all'array events utilizzando push
-            setEvents(newEvents);
+        // Invia la richiesta di aggiornamento degli eventi dell'utente al backend
+        const updateResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + storedUserToken,
+            },
+            method: "PUT",
+            body: JSON.stringify({ eventId: deletedEvent }),
           }
+        );
 
-          setEventId(selectedEvent._id);
-
-          toast("Event added to your dashboard successfully!", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-        } else {
-          toast.error("Something went wrong while updating user events!", {
-            position: toast.POSITION.TOP_LEFT,
-          });
+        if (updateResponse.ok) {
+          // Elimina l'evento dall'array degli eventi utilizzando splice
+          setEvents(deletedEvent);
         }
-      } else {
-        // L'evento è già presente nell'array degli eventi dell'utente
-        toast.warn("Event is already added to your dashboard!", {
+
+        setEventId(eventId);
+
+        toast("Event deleted from your dashboard successfully!", {
           position: "bottom-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -242,6 +133,9 @@ const CalendarElement = () => {
           progress: undefined,
           theme: "dark",
         });
+        setTimeout(() => {
+          window.location.href = `/users/${storedUserId}`;
+        }, 2000);
       }
     } catch (error) {
       console.log("Error fetching data:", error);
@@ -249,6 +143,47 @@ const CalendarElement = () => {
       setLoading(false);
     }
   };
+
+  const ShowEventDetails = (event) => {
+    setSelectedEvent(event);
+  };
+
+  console.log("selectedEvent:", selectedEvent);
+
+  const getEvent = async () => {
+    try {
+      if (
+        !selectedEvent ||
+        !selectedEvent.gdl ||
+        !selectedEvent.gdl ||
+        !selectedEvent._id
+      ) {
+        // Gestione caso in cui l'evento o l'ID sia mancante
+        console.error("Event or ID is missing.");
+        return;
+      }
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${selectedEvent?.gdl}/events/${selectedEvent?._id}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setEvents(data);
+      console.log("Data:", data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    if (selectedEvent) {
+      getEvent();
+    }
+  }, [selectedEvent]);
 
   return (
     <>
@@ -305,30 +240,26 @@ const CalendarElement = () => {
                           </span>{" "}
                           <div className="event-actions">
                             <button
-                              className="update-btn"
-                              onClick={() => changeEvent(eventName)}
-                            >
-                              Update Event{" "}
-                            </button>{" "}
-                            <button
                               className="delete-btn"
                               onClick={() => deleteEvent(id)}
                             >
                               Delete Event{" "}
                             </button>{" "}
-                            <button
-                              className="add-btn"
-                              onClick={() => addEventToDashboard(id)}
-                            >
-                              Add Event to your dashboard{" "}
-                            </button>{" "}
                           </div>{" "}
                         </div>{" "}
-                        <div className="event-card-body">
-                          <h5 className="font-face-CinzelDecorative">
-                            Event title:{" "}
-                          </h5>{" "}
-                          <p>{selectedEvent.title}</p>
+                        <div className="event-card-body d-flex flex-column">
+                          <div className="d-flex">
+                            <h5 className="font-face-CinzelDecorative me-5">
+                              Event title:{" "}
+                            </h5>{" "}
+                            <p>{selectedEvent.title}</p>
+                          </div>
+                          <div className="d-flex">
+                            <h5 className="font-face-CinzelDecorative">
+                              Gdl:{" "}
+                            </h5>{" "}
+                            <p>{events?.gdl?.bookTitle}</p>
+                          </div>
                         </div>{" "}
                         <div className="event-card-body"></div>{" "}
                       </div>
