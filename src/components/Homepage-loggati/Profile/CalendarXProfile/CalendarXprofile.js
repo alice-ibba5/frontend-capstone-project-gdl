@@ -254,7 +254,7 @@ const CalendarElement = () => {
     <>
       <h4 className="font-face-CinzelDecorative mt-5">
         {" "}
-        Calendario degli eventi a cui partecipi{" "}
+        Calendario degli eventi a cui partecipi:{" "}
       </h4>
       <Container className="app">
         <Row className="containerCalendar">
