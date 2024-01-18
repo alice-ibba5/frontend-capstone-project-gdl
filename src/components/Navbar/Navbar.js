@@ -74,11 +74,13 @@ function NavBar({ searchQuery, setSearchQuery }) {
           <img className="blog-navbar-brand" alt="logo" src={logo} />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll">
+        <Navbar.Collapse
+          id="navbarScroll"
+          style={{ backgroundColor: "#F4ECE8" }}
+        >
           <Nav
             className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: "100px" }}
-            navbarScroll
+            style={{ maxHeight: "100px", backgroundColor: "#F4ECE8" }}
           >
             <Nav.Link href="/gdl">Home</Nav.Link>
             <Nav.Link href="/chi-siamo">Chi siamo</Nav.Link>
