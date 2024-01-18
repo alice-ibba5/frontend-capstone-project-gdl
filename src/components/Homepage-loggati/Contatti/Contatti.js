@@ -18,6 +18,7 @@ const Contatti = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [blog, setBlog] = useState();
+  const [emailDaInviare, setEmailDaInviare] = useState();
   const [loading, setLoading] = useState(false);
   const storedUserId = localStorage.getItem("userId");
 
@@ -68,7 +69,7 @@ const Contatti = () => {
           );
 
           if (response.ok) {
-            setBlog(data);
+            setEmailDaInviare(data);
           }
         } catch (error) {
           console.error("Error sending email:", error);
