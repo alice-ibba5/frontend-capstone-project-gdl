@@ -80,7 +80,7 @@ function NavBar({ searchQuery, setSearchQuery }) {
         >
           <Nav
             className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: "100px", backgroundColor: "#F4ECE8" }}
+            style={{ backgroundColor: "#F4ECE8" }}
           >
             <Nav.Link href="/gdl">Home</Nav.Link>
             <Nav.Link href="/chi-siamo">Chi siamo</Nav.Link>
