@@ -74,10 +74,7 @@ function NavBar({ searchQuery, setSearchQuery }) {
           <img className="blog-navbar-brand" alt="logo" src={logo} />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse
-          id="navbarScroll"
-          style={{ backgroundColor: "#F4ECE8" }}
-        >
+        <Navbar.Collapse id="navbarScroll">
           <Nav
             className="me-auto my-2 my-lg-0"
             style={{ backgroundColor: "#F4ECE8" }}
