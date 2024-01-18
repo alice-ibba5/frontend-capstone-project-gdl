@@ -10,6 +10,7 @@ import {
   Telegram,
 } from "react-bootstrap-icons";
 import { ToastContainer, toast } from "react-toastify";
+import "./ContattiStyles.css";
 
 const Contatti = () => {
   const [name, setName] = useState("");
@@ -120,7 +121,7 @@ const Contatti = () => {
           </Col>
 
           <Col lg={6}>
-            <h3 className="font-face-CinzelDecorative mt-3">
+            <h3 className="font-face-CinzelDecorative mt-3 hr">
               Inviaci una mail!
             </h3>
             <Form onSubmit={handleSubmit}>
