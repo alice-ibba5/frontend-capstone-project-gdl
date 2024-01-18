@@ -58,6 +58,7 @@ const GdlList = ({ searchQuery }) => {
                   lg={3}
                   md={4}
                   sm={6}
+                  xs={6}
                   style={{
                     marginBottom: 50,
                   }}
