@@ -77,7 +77,14 @@ const Profile = () => {
             <Container className="d-flex flex-row flex-wrap">
               {user?.gdlId?.map((gdl, index) => (
                 <>
-                  <Col lg={3} className="d-flex flex-column">
+                  <Col
+                    xl={2}
+                    lg={3}
+                    md={4}
+                    sm={6}
+                    xs={6}
+                    className="d-flex flex-column"
+                  >
                     <Link
                       to={`/gdl/${gdl?._id}`}
                       className="gdl-link align-self-center"
