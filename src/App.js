@@ -20,12 +20,47 @@ function App() {
       <NavBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <Routes>
         <Route path="/" exact element={<HomeSlog />} />
-        <Route path="/gdl" element={<HomeLog searchQuery={searchQuery} />} />
+        <Route
+          path="/gdl"
+          element={
+            <PrivateRoute>
+              <HomeLog searchQuery={searchQuery} />
+            </PrivateRoute>
+          }
+        />
         <Route path="/chi-siamo" element={<ChiSiamo />} />
-        <Route path="/contatti" element={<Contatti />} />
-        <Route path="/nuova-proposta" element={<NuovaProposta />} />
-        <Route path="/gdl/:id" element={<GdlDetails />} />
-        <Route path="/users/:id" element={<Profile />} />
+        <Route
+          path="/contatti"
+          element={
+            <PrivateRoute>
+              <Contatti />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/nuova-proposta"
+          element={
+            <PrivateRoute>
+              <NuovaProposta />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/gdl/:id"
+          element={
+            <PrivateRoute>
+              <GdlDetails />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/:id"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
       </Routes>
       <Footer />
     </Router>

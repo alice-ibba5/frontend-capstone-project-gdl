@@ -47,6 +47,33 @@ const Contatti = () => {
       if (textResponse.ok) {
         setBlog(textData);
 
+        const data = {
+          user: storedUserId,
+          name: name,
+          surname: surname,
+          email: email,
+          message: message,
+        };
+
+        try {
+          let response = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/emailAlSito`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              method: "POST",
+              body: JSON.stringify(data),
+            }
+          );
+
+          if (response.ok) {
+            setBlog(data);
+          }
+        } catch (error) {
+          console.error("Error sending email:", error);
+        }
+
         toast("Email sent successfully!", {
           position: "bottom-right",
           autoClose: 5000,
@@ -58,9 +85,9 @@ const Contatti = () => {
           theme: "dark",
         });
 
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000);
+        // setTimeout(() => {
+        //   window.location.href = "/";
+        // }, 2000);
 
         console.log("textData:", textData);
         try {
@@ -102,7 +129,7 @@ const Contatti = () => {
           <Col lg={6}>
             <h3 className="font-face-CinzelDecorative mt-3">Contatti</h3>
             <h6 className="font-face-CinzelDecorative mt-3">Email:</h6>
-            <p>gdlove@gmail.com</p>
+            <p>gdlove.wordsforthesoul@gmail.com</p>
             <h6 className="font-face-CinzelDecorative mt-3">
               Numero di telefono:
             </h6>
