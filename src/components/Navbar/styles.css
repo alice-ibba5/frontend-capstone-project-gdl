@@ -21,5 +21,12 @@
   .login-menu {
     width: 400px
   }
+
+  @media only screen and (max-width: 992px) {
+    #navbarScroll {
+      background-color: #F4ECE8; 
+    }
+  }
+  
   
   
