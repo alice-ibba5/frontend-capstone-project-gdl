@@ -254,11 +254,16 @@ const CalendarElement = () => {
                             </h5>{" "}
                             <p>{selectedEvent.title}</p>
                           </div>
-                          <div className="d-flex">
+                          <div className="d-flex justify-content-between">
                             <h5 className="font-face-CinzelDecorative">
                               Gdl:{" "}
                             </h5>{" "}
-                            <p>{events?.gdl?.bookTitle}</p>
+                            <Image
+                              className="avatar align-item-center"
+                              src={events?.gdl?.cover}
+                              fluid
+                              style={{ width: "100px" }}
+                            />
                           </div>
                         </div>{" "}
                         <div className="event-card-body"></div>{" "}
