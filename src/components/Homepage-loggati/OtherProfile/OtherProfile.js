@@ -14,6 +14,7 @@ const OtherProfile = () => {
   const [friendId, setFriendId] = useState("");
   const [userFriends, setUserFriends] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const [isMounted, setIsMounted] = useState(true);
   const { userId } = useParams();
@@ -139,9 +140,9 @@ const OtherProfile = () => {
           if (updateResponse.ok) {
             // Aggiungi l'amico all'array degli amici utilizzando push
             setFriend(newFriend);
+            setIsFollowing(true);
+            setFriendId(userId);
           }
-
-          setFriendId(userId);
 
           toast("Now you're following them!", {
             position: "bottom-right",
@@ -213,9 +214,9 @@ const OtherProfile = () => {
               <Col lg={6} className="mt-5">
                 <Button
                   className="buttonAggiungi font-face-CinzelDecorative align-self-center"
-                  onClick={() => segui(userId)}
+                  onClick={isFollowing ? null : () => segui(userId)}
                 >
-                  Segui
+                  {isFollowing ? "Segui già" : "Segui"}
                 </Button>
               </Col>
             )}
