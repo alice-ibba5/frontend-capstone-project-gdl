@@ -118,64 +118,6 @@ function Login() {
         if (userResponse.ok) {
           const userDetails = await userResponse.json();
           const email = userDetails.email;
-
-          // Ora puoi utilizzare l'email per la chiamata checkUserExistence
-          const checkUserResponse = await fetch(
-            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/checkUserExistence`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                email,
-              }),
-            }
-          );
-
-          if (checkUserResponse.ok) {
-            const { userExists } = await checkUserResponse.json();
-
-            if (!userExists) {
-              // L'utente non è ancora nel database, puoi inviare l'email di benvenuto
-
-              try {
-                const welcomeEmailResponse = await fetch(
-                  `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/verifyEmail`,
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      email,
-                    }),
-                  }
-                );
-
-                if (welcomeEmailResponse.ok) {
-                  const data = await welcomeEmailResponse.json();
-                  toast("Welcome email sent successfully", {
-                    position: "bottom-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                  });
-                } else {
-                  console.error(
-                    "Failed to send welcome email:",
-                    welcomeEmailResponse.statusText
-                  );
-                }
-              } catch (error) {
-                console.error("Error sending welcome email:", error);
-              }
-            }
-          }
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -201,7 +143,7 @@ function Login() {
         if (response.ok) {
           const userDetails = await response.json();
           const email = userDetails.email;
-          setUser(userDetails);
+          setUser(email);
           setIsLoggedIn(true);
           toast("You are logged in with Google!!", {
             position: "bottom-right",
