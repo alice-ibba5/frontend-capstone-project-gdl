@@ -106,35 +106,11 @@ function Login() {
 
       // Effettua una richiesta al backend per ottenere le informazioni dell'utente
       try {
-        const userResponse = await fetch(
+        const response = await fetch(
           `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (userResponse.ok) {
-          const userDetails = await userResponse.json();
-        }
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
-    }
-  };
-
-  const isLogged = async () => {
-    const storedUserId = localStorage.getItem("userId");
-    const storedToken = localStorage.getItem("token");
-
-    if (storedUserId) {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
             },
           }
         );
@@ -160,14 +136,14 @@ function Login() {
           }, 2000);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user details:", error);
       }
     }
   };
 
   useEffect(() => {
     console.log("useEffect is triggered");
-    isLogged();
+
     GoogleCallbackComponent();
   }, []);
 
