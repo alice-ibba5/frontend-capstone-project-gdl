@@ -8,6 +8,7 @@ import GdlDetails from "./components/Gdl-details/GdlDetails.js";
 import Footer from "./components/Homepage-loggati/Footer/Footer.js";
 import Contatti from "./components/Homepage-loggati/Contatti/Contatti.js";
 import Profile from "./components/Homepage-loggati/Profile/Profile.js";
+import OtherProfile from "./components/Homepage-loggati/OtherProfile/OtherProfile.js";
 import PrivateRoute from "./PrivateRoute.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from "react";
@@ -54,10 +55,18 @@ function App() {
           }
         />
         <Route
-          path="/users/:id"
+          path="/users/me/:id"
           element={
             <PrivateRoute>
               <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users/:userId"
+          element={
+            <PrivateRoute>
+              <OtherProfile />
             </PrivateRoute>
           }
         />

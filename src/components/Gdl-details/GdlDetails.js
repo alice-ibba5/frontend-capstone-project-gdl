@@ -11,7 +11,7 @@ import {
   Form,
 } from "react-bootstrap";
 import { PencilFill, Trash3 } from "react-bootstrap-icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import Creator from "../../components/Homepage-loggati/Cards/Creator.js";
 import CalendarElement from "./Calendar.js";
 import queryString from "query-string";
@@ -485,12 +485,17 @@ const GdlDetails = ({}) => {
               {gdlGet?.userId?.map((user, index) => (
                 <>
                   <Col lg={2} className="d-flex flex-column">
-                    <Image
-                      className="cover align-self-center my-3"
-                      src={user.avatar}
-                      fluid
-                      style={{ width: "100px" }}
-                    />
+                    <Link
+                      to={`/users/${user?._id}`}
+                      className="gdl-link align-self-center"
+                    >
+                      <Image
+                        className="cover align-self-center my-3"
+                        src={user.avatar}
+                        fluid
+                        style={{ width: "100px" }}
+                      />
+                    </Link>
                     <p
                       className="align-self-center font-face-CinzelDecorative"
                       key={index}

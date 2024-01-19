@@ -100,7 +100,7 @@ function NavBar({ searchQuery, setSearchQuery }) {
             <div className="my-3 mx-3 d-flex">
               <Row>
                 <Col className="pe-0 align-self-center">
-                  <Link to={`/users/${user?._id}`} className="gdl-link">
+                  <Link to={`/users/me/${user?._id}`} className="gdl-link">
                     <Image
                       className="blog-user "
                       src={user?.avatar}
