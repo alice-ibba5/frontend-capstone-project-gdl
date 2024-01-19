@@ -117,7 +117,6 @@ function Login() {
 
         if (userResponse.ok) {
           const userDetails = await userResponse.json();
-          const email = userDetails.email;
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -143,7 +142,7 @@ function Login() {
         if (response.ok) {
           const userDetails = await response.json();
           const email = userDetails.email;
-          setUser(email);
+          setUser(userDetails);
           setIsLoggedIn(true);
           toast("You are logged in with Google!!", {
             position: "bottom-right",
