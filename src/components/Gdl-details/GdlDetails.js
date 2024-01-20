@@ -550,7 +550,7 @@ const GdlDetails = ({}) => {
                         />
                       </Link>
                       <p
-                        className="align-self-center font-face-CinzelDecorative"
+                        className="align-self-center font-face-CinzelDecorative ms-3"
                         key={index}
                       >
                         {user.name} {user.surname}
