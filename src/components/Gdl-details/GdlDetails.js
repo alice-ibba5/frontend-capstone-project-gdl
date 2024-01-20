@@ -44,6 +44,10 @@ const GdlDetails = ({}) => {
   const handleShow2 = () => setShow2(true);
   const storedUserId = localStorage.getItem("userId");
   const storedUserToken = localStorage.getItem("token");
+  const [show3, setShow3] = useState(false);
+
+  const handleClose3 = () => setShow3(false);
+  const handleShow3 = () => setShow3(true);
 
   const getGdl = async () => {
     try {
@@ -505,33 +509,52 @@ const GdlDetails = ({}) => {
 
           <Container className="p-0">
             <h4 className="font-face-CinzelDecorative mt-5">
-              Utenti che partecipano:
+              Participants:{" "}
+              <Button variant="dark" onClick={handleShow3}>
+                <b>{gdlGet?.userId?.length}</b>
+              </Button>
             </h4>
-            <Container className="d-flex flex-row flex-wrap">
-              {gdlGet?.userId?.map((user, index) => (
-                <>
-                  <Col lg={2} className="d-flex flex-column">
-                    <Link
-                      to={`/users/${user?._id}`}
-                      className="gdl-link align-self-center"
-                    >
-                      <Image
-                        className="cover align-self-center my-3"
-                        src={user.avatar}
-                        fluid
-                        style={{ width: "100px" }}
-                      />
-                    </Link>
-                    <p
-                      className="align-self-center font-face-CinzelDecorative"
-                      key={index}
-                    >
-                      {user.name} {user.surname}
-                    </p>
-                  </Col>
-                </>
-              ))}
-            </Container>
+            <Col className="d-flex usersPartecipanti">
+              <Modal show={show3} onHide={handleClose3}>
+                <Modal.Header closeButton>
+                  <Modal.Title className="font-face-CinzelDecorative my-3">
+                    Participants:
+                  </Modal.Title>
+                </Modal.Header>
+                {gdlGet?.userId?.map((user, index) => (
+                  <>
+                    <Modal.Body className="d-flex">
+                      <Link
+                        to={`/users/${user?._id}`}
+                        className="gdl-link align-self-center"
+                      >
+                        <Image
+                          className="cover align-self-center my-3"
+                          src={user.avatar}
+                          fluid
+                          style={{ width: "100px" }}
+                        />
+                      </Link>
+                      <p
+                        className="align-self-center font-face-CinzelDecorative"
+                        key={index}
+                      >
+                        {user.name} {user.surname}
+                      </p>
+                    </Modal.Body>
+                  </>
+                ))}
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={handleClose3}
+                    className="font-face-CinzelDecorative my-3"
+                  >
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </Col>
           </Container>
 
           {/* CALENDAR  */}
@@ -551,7 +574,7 @@ const GdlDetails = ({}) => {
             <Modal show={show} onHide={handleClose}>
               <Modal.Header closeButton>
                 <Modal.Title className="font-face-CinzelDecorative">
-                  Aggiungi un commento!
+                  Add a comment!
                 </Modal.Title>
               </Modal.Header>
 
@@ -568,7 +591,7 @@ const GdlDetails = ({}) => {
                 </Form.Group>
 
                 <Form.Group controlId="blog-category" className="mt-3 mx-3">
-                  <Form.Label>Testo del commento</Form.Label>
+                  <Form.Label>Comment text</Form.Label>
                   <Form.Control
                     size="lg"
                     placeholder="Scrivi qui..."
@@ -653,7 +676,7 @@ const GdlDetails = ({}) => {
                         <Modal show={show2} onHide={handleClose2}>
                           <Modal.Header closeButton>
                             <Modal.Title className="font-face-CinzelDecorative">
-                              Modifica il commento:
+                              Update the comment:
                             </Modal.Title>
                           </Modal.Header>
                           <Form className="mt-5" onSubmit={changeComment}>
@@ -661,7 +684,7 @@ const GdlDetails = ({}) => {
                               controlId="blog-category"
                               className="mt-3 mx-3"
                             >
-                              <Form.Label>Testo del commento</Form.Label>
+                              <Form.Label>Comment text</Form.Label>
                               <Form.Control
                                 size="lg"
                                 placeholder="Scrivi qui..."
@@ -688,7 +711,7 @@ const GdlDetails = ({}) => {
                                 }}
                                 onClick={handleClose2}
                               >
-                                Invia
+                                Submit
                               </Button>
                             </Modal.Footer>
                           </Form>

@@ -73,6 +73,7 @@ const Profile = () => {
                 style={{ width: "200px" }}
               />
             </Col>
+
             <Col lg={6} className="">
               <h4 className="font-face-CinzelDecorative my-3">
                 Following:{" "}
