@@ -473,7 +473,17 @@ const GdlDetails = ({}) => {
 
               <div className="blog-details-container mt-3">
                 <div className="blog-details-author">
-                  <Creator {...gdlGet?.user} />
+                  <Link
+                    to={
+                      gdlGet?.user?._id === storedUserId
+                        ? `/users/me/${storedUserId}`
+                        : `/users/${gdlGet?.user?._id}`
+                    }
+                    className="gdl-link align-self-center"
+                    style={{ color: "black" }}
+                  >
+                    <Creator {...gdlGet?.user} />
+                  </Link>
                 </div>
                 <div className="blog-details-info mt-3">
                   <div>{`Lettura da ${gdlGet?.readTime.value} ${gdlGet?.readTime.unit}`}</div>
@@ -492,7 +502,7 @@ const GdlDetails = ({}) => {
                     className="font-face-CinzelDecorative align-self-center partecipiGià"
                     disabled
                   >
-                    Partecipi già al GDL!
+                    Already joined
                   </Button>
                 ) : (
                   <Button
@@ -500,7 +510,7 @@ const GdlDetails = ({}) => {
                     className="font-face-CinzelDecorative align-self-center"
                     onClick={isFollowing ? null : () => partecipaAlGdl(id)}
                   >
-                    Partecipa al GDL!
+                    Join the GDL!
                   </Button>
                 )}
               </div>
@@ -525,7 +535,11 @@ const GdlDetails = ({}) => {
                   <>
                     <Modal.Body className="d-flex">
                       <Link
-                        to={`/users/${user?._id}`}
+                        to={
+                          user._id === storedUserId
+                            ? `/users/me/${storedUserId}`
+                            : `/users/${user._id}`
+                        }
                         className="gdl-link align-self-center"
                       >
                         <Image

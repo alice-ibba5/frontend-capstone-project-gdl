@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "./styles.css";
+import Modal from "react-bootstrap/Modal";
 
 const OtherProfile = () => {
   const storedUserId = localStorage.getItem("userId");
@@ -15,6 +16,10 @@ const OtherProfile = () => {
   const [userFriends, setUserFriends] = useState([]);
   const [friends, setFriends] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const [isMounted, setIsMounted] = useState(true);
   const { userId } = useParams();
@@ -213,26 +218,74 @@ const OtherProfile = () => {
               />
             </Col>
             {console.log("friends:", friends)}
-            {friends && friends.some((friend) => friend._id === userId) ? (
-              <Col lg={6} className="mt-5">
+            <Col lg={6} className="">
+              {friends && friends.some((friend) => friend._id === userId) ? (
                 <Button
                   className="font-face-CinzelDecorative align-self-center"
                   variant="dark"
                   disabled
                 >
-                  Segui già
+                  Following
                 </Button>
-              </Col>
-            ) : (
-              <Col lg={6} className="mt-5">
+              ) : (
                 <Button
                   className="buttonAggiungi font-face-CinzelDecorative align-self-center"
                   onClick={isFollowing ? null : () => segui(userId)}
                 >
-                  {isFollowing ? "Segui già" : "Segui"}
+                  {isFollowing ? "Following" : "Follow"}
                 </Button>
+              )}
+              <h4 className="font-face-CinzelDecorative my-3">
+                Following:{" "}
+                <Button variant="dark" onClick={handleShow}>
+                  <b>{user.friendId.length}</b>
+                </Button>
+              </h4>
+              <Col className="d-flex usersSeguiti">
+                <Modal show={show} onHide={handleClose}>
+                  <Modal.Header closeButton>
+                    <Modal.Title className="font-face-CinzelDecorative my-3">
+                      Following:
+                    </Modal.Title>
+                  </Modal.Header>
+                  {user?.friendId?.map((friend, i) => (
+                    <Modal.Body className="d-flex">
+                      <Link
+                        to={
+                          friend._id === storedUserId
+                            ? `/users/me/${storedUserId}`
+                            : `/users/${friend._id}`
+                        }
+                        className="gdl-link align-self-center"
+                      >
+                        <Image
+                          className="avatar mb-3 me-2"
+                          src={friend.avatar}
+                          fluid
+                          style={{ width: "100px" }}
+                        />
+                      </Link>
+
+                      <p
+                        className="align-self-center font-face-CinzelDecorative carouselCaption ms-3"
+                        key={i}
+                      >
+                        {friend.name} {friend.surname}
+                      </p>
+                    </Modal.Body>
+                  ))}
+                  <Modal.Footer>
+                    <Button
+                      variant="secondary"
+                      onClick={handleClose}
+                      className="font-face-CinzelDecorative my-3"
+                    >
+                      Close
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
               </Col>
-            )}
+            </Col>
           </Container>
 
           <hr></hr>
