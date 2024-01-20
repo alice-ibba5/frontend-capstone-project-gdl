@@ -103,6 +103,21 @@ const OtherProfile = () => {
 
         console.log("friends is: ", typeof friends);
 
+        // Verifica se l'utente sta cercando di seguire se stesso
+        if (userId === storedUserId) {
+          toast.warn("You cannot follow yourself!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          return; // Interrompi l'esecuzione della funzione
+        }
+
         // Verifica se l'amico è già presente nell'array degli amici dell'utente
         let isFriendAlreadyAdded = false;
 

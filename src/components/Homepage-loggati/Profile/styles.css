@@ -3,13 +3,7 @@
     box-shadow: 5px 5px 15px 5px #696969;
 }
 
-@media only screen and (max-width: 768px) {
-.usersSeguiti {
-    margin-top: 10px;
-    flex-direction: column;
-}}
-
-.carouselCaption {
-    color: black !important;
-    margin-top: 50px;
+#carousel {
+    width: 300px !important;
 }
+

@@ -77,7 +77,12 @@ const Profile = () => {
                 Users che segui: <b>{user.friendId.length}</b>
               </h4>
               <Col className="d-flex usersSeguiti">
-                <Carousel activeIndex={index} onSelect={handleSelect}>
+                <Carousel
+                  activeIndex={index}
+                  onSelect={handleSelect}
+                  id="carousel"
+                  variant="dark"
+                >
                   {user?.friendId?.map((friend, i) => (
                     <Carousel.Item className="align-self-center">
                       <Link
