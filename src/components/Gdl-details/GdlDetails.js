@@ -21,14 +21,11 @@ import "./GdlDetailsStyles.css";
 import { ToastContainer, toast } from "react-toastify";
 
 const GdlDetails = ({}) => {
-  const storedUserId = localStorage.getItem("userId");
   const [gdlGet, setGdlGet] = useState(null);
   const [comments, setComments] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [comment, setComment] = useState();
   const [gdl, setGdl] = useState("");
   const [text, setText] = useState("");
@@ -37,17 +34,35 @@ const GdlDetails = ({}) => {
   const [show2, setShow2] = useState(false);
   const [commentToDeleteId, setCommentToDeleteId] = useState(null);
   const [editingComment, setEditingComment] = useState(null);
-  const [editingCommentText, setEditingCommentText] = useState("");
   const [gdlId, setGdlId] = useState("");
   const [userId, setUserId] = useState("");
-
+  const [gdls, setGdls] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
+  const storedUserId = localStorage.getItem("userId");
+  const storedUserToken = localStorage.getItem("token");
 
   const getGdl = async () => {
     try {
+      // Ottieni i gdl dell'utente dal backend
+      const userResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + storedUserToken,
+          },
+        }
+      );
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        const userGdl = userData.gdlId || []; // Array dei gdl dell'utente
+        setGdls(userGdl);
+      }
+
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`
       );
@@ -260,7 +275,8 @@ const GdlDetails = ({}) => {
       if (userResponse.ok) {
         const userData = await userResponse.json();
         const userGdl = userData.gdlId || []; // Array dei gdl dell'utente
-        console.log(userGdl);
+        setGdls(userGdl);
+        console.log("userGdl is: ", userGdl);
 
         // Verifica se il gdl è già presente nell'array dei gdl dell'utente
         let isGdlAlreadyAdded = false;
@@ -299,9 +315,9 @@ const GdlDetails = ({}) => {
           if (updateResponse.ok) {
             // Aggiungi il gdl all'array events utilizzando push
             setGdl(newGdl);
+            setGdlId(id);
+            setIsFollowing(true);
           }
-
-          setGdlId(id);
 
           toast("Gdl added to your dashboard successfully!", {
             position: "bottom-right",
@@ -466,13 +482,23 @@ const GdlDetails = ({}) => {
                     {/* <BlogLike defaultLikes={["123"]} onChange={console.log} /> */}
                   </div>
                 </div>
-                <Button
-                  variant="dark"
-                  className="font-face-CinzelDecorative align-self-center"
-                  onClick={() => partecipaAlGdl(id)}
-                >
-                  Partecipa al GDL!
-                </Button>
+                {gdls && gdls.some((gdl) => gdl._id === id) ? (
+                  <Button
+                    variant="dark"
+                    className="font-face-CinzelDecorative align-self-center partecipiGià"
+                    disabled
+                  >
+                    Partecipi già al GDL!
+                  </Button>
+                ) : (
+                  <Button
+                    variant="dark"
+                    className="font-face-CinzelDecorative align-self-center"
+                    onClick={isFollowing ? null : () => partecipaAlGdl(id)}
+                  >
+                    Partecipa al GDL!
+                  </Button>
+                )}
               </div>
             </Col>
           </Container>

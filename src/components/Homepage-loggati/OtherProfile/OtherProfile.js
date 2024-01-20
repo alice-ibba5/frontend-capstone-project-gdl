@@ -196,8 +196,6 @@ const OtherProfile = () => {
                 fluid
                 style={{ width: "200px" }}
               />
-              <h5 className="font-face-CinzelDecorative mt-3">Email: </h5>
-              <p>{user?.email}</p>
             </Col>
             {console.log("friends:", friends)}
             {friends && friends.some((friend) => friend._id === userId) ? (

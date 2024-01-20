@@ -2,6 +2,8 @@ import { Container, Image, Spinner, Col } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CalendarElement from "../Profile/CalendarXProfile/CalendarXprofile.js";
+import Carousel from "react-bootstrap/Carousel";
+
 import "./styles.css";
 
 const Profile = () => {
@@ -10,6 +12,11 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({});
   const [isMounted, setIsMounted] = useState(true);
+  const [index, setIndex] = useState(0);
+
+  const handleSelect = (selectedIndex) => {
+    setIndex(selectedIndex);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,15 +66,44 @@ const Profile = () => {
           <Container className="p-0 d-flex">
             <Col lg={6} className="mt-4">
               <Image
-                className="avatar align-item-center"
+                className="avatar align-item-center mb-5"
                 src={user.avatar}
                 fluid
                 style={{ width: "200px" }}
               />
-              <h5 className="font-face-CinzelDecorative mt-3">Email: </h5>
-              <p>{user.email}</p>
             </Col>
-            <Col lg={6} className="mt-5"></Col>
+            <Col lg={6} className="">
+              <h4 className="font-face-CinzelDecorative my-3">
+                Users che segui: <b>{user.friendId.length}</b>
+              </h4>
+              <Col className="d-flex usersSeguiti">
+                <Carousel activeIndex={index} onSelect={handleSelect}>
+                  {user?.friendId?.map((friend, i) => (
+                    <Carousel.Item>
+                      <Link
+                        to={`/users/${friend._id}`}
+                        className="gdl-link align-self-center"
+                      >
+                        <Image
+                          className="avatar mb-3 me-2"
+                          src={friend.avatar}
+                          fluid
+                          style={{ width: "100px" }}
+                        />
+                      </Link>
+                      <Carousel.Caption>
+                        <p
+                          className="align-self-center font-face-CinzelDecorative"
+                          key={i}
+                        >
+                          {friend.name} {friend.surname}
+                        </p>
+                      </Carousel.Caption>
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              </Col>
+            </Col>
           </Container>
           <hr></hr>
           <Container className="container-gdl p-0">
