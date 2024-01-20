@@ -292,10 +292,7 @@ const CalendarElement = () => {
 
   return (
     <>
-      <h4 className="font-face-CinzelDecorative mt-5">
-        {" "}
-        Calendario degli eventi{" "}
-      </h4>
+      <h4 className="font-face-CinzelDecorative mt-5"> Events calendar </h4>
       <Container className="app">
         <Row className="containerCalendar">
           <Col className="calendar-container p-0">
@@ -321,7 +318,7 @@ const CalendarElement = () => {
               <Col lg={4} className="event-form">
                 <h4 className="font-face-CinzelDecorative mt-3">
                   {" "}
-                  Crea un evento{" "}
+                  Create an event{" "}
                 </h4>{" "}
                 <p>
                   {" "}
@@ -347,7 +344,7 @@ const CalendarElement = () => {
                   <>
                     <h4 className="font-face-CinzelDecorative mt-3">
                       {" "}
-                      Eventi in programma:{" "}
+                      Attended events:{" "}
                     </h4>{" "}
                     <div className="event-cards">
                       <div key={id} className="event-card">

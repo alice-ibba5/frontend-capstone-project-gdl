@@ -125,9 +125,7 @@ const Profile = () => {
           </Container>
           <hr></hr>
           <Container className="container-gdl p-0">
-            <h4 className="font-face-CinzelDecorative my-3">
-              GDL a cui partecipi:{" "}
-            </h4>
+            <h4 className="font-face-CinzelDecorative my-3">GDL attended: </h4>
             <Container className="d-flex flex-row flex-wrap">
               {user?.gdlId?.map((gdl, index) => (
                 <>

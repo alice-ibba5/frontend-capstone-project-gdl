@@ -109,7 +109,7 @@ function NuovaProposta() {
     <Container className="new-blog-container">
       <Form className="mt-5" onSubmit={handleSubmit}>
         <Form.Group controlId="blog-form" className="mt-3">
-          <Form.Label>Titolo</Form.Label>
+          <Form.Label>Title</Form.Label>
           <Form.Control
             size="lg"
             placeholder="Title"
@@ -120,7 +120,7 @@ function NuovaProposta() {
         </Form.Group>
 
         <Form.Group controlId="blog-form" className="mt-3">
-          <Form.Label>Autore</Form.Label>
+          <Form.Label>Author</Form.Label>
           <Form.Control
             size="lg"
             placeholder="Author"
@@ -131,7 +131,7 @@ function NuovaProposta() {
         </Form.Group>
 
         <Form.Group controlId="blog-form" className="mt-3">
-          <Form.Label>Trama</Form.Label>
+          <Form.Label>Plot</Form.Label>
           <Form.Control
             size="lg"
             placeholder="Plot"
@@ -152,7 +152,7 @@ function NuovaProposta() {
         </Form.Group>
 
         <Form.Group controlId="blog-category" className="mt-3">
-          <Form.Label>Categoria</Form.Label>
+          <Form.Label>Category</Form.Label>
           <Form.Control
             size="lg"
             placeholder="Category"
@@ -175,7 +175,7 @@ function NuovaProposta() {
         </Form.Group>
 
         <Form.Group className="mt-3">
-          <Form.Label>Tempo di lettura</Form.Label>
+          <Form.Label>Reading time</Form.Label>
           <div className="d-flex align-items-center">
             <Form.Control
               size="lg"
@@ -187,12 +187,12 @@ function NuovaProposta() {
                 width: 50,
               }}
             />
-            <span className="ms-2">ore</span>
+            <span className="ms-2">hours</span>
           </div>
         </Form.Group>
 
         <Form.Group controlId="blog-category" className="mt-3">
-          <Form.Label>N. pagine</Form.Label>
+          <Form.Label>Pages</Form.Label>
           <Form.Control
             size="lg"
             placeholder="Pages"
@@ -225,7 +225,7 @@ function NuovaProposta() {
               marginLeft: "1em",
             }}
           >
-            Invia
+            Submit
           </Button>
         </Form.Group>
       </Form>

@@ -80,9 +80,9 @@ function NavBar({ searchQuery, setSearchQuery }) {
             style={{ backgroundColor: "#F4ECE8" }}
           >
             <Nav.Link href="/gdl">Home</Nav.Link>
-            <Nav.Link href="/chi-siamo">Chi siamo</Nav.Link>
-            <Nav.Link href="/contatti">Contatti</Nav.Link>
-            <Nav.Link href="/nuova-proposta">Proponi un GDL!</Nav.Link>
+            <Nav.Link href="/chi-siamo">Who we are</Nav.Link>
+            <Nav.Link href="/contatti">Contacts</Nav.Link>
+            <Nav.Link href="/nuova-proposta">Create a GDL!</Nav.Link>
           </Nav>
 
           <Form className="d-flex">

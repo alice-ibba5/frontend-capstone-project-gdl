@@ -21,7 +21,7 @@ const Gdl = (props) => {
           </Card.Title>
           <p>Deadline: {deadline}</p>
           <p>
-            N° partecipanti: <b>{userId.length}</b>
+            Participants: <b>{userId.length}</b>
           </p>
         </Card.Body>
         <Card.Footer>

@@ -128,15 +128,13 @@ const Contatti = () => {
       <Container>
         <Row>
           <Col lg={6}>
-            <h3 className="font-face-CinzelDecorative mt-3">Contatti</h3>
+            <h3 className="font-face-CinzelDecorative mt-3">Contacts</h3>
             <h6 className="font-face-CinzelDecorative mt-3">Email:</h6>
             <p>gdlove.wordsforthesoul@gmail.com</p>
-            <h6 className="font-face-CinzelDecorative mt-3">
-              Numero di telefono:
-            </h6>
+            <h6 className="font-face-CinzelDecorative mt-3">Phone number:</h6>
             <p>+39 346 1234567</p>
             <h6 className="font-face-CinzelDecorative mt-3">
-              Vieni a trovarci sui social:
+              Social profiles:
             </h6>
             <div className="mt-3">
               <Facebook className="me-2 fs-3" role="button" />
@@ -150,7 +148,7 @@ const Contatti = () => {
 
           <Col lg={6}>
             <h3 className="font-face-CinzelDecorative mt-3 hr">
-              Inviaci una mail!
+              Send us an email!
             </h3>
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3 d-none" controlId="formBasicEmail">
@@ -163,7 +161,7 @@ const Contatti = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Nome</Form.Label>
+                <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter name"
@@ -173,7 +171,7 @@ const Contatti = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Cognome</Form.Label>
+                <Form.Label>Surname</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter surname"
@@ -194,10 +192,10 @@ const Contatti = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Il tuo messaggio</Form.Label>
+                <Form.Label>Your message</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Scrivi qui..."
+                  placeholder="Type here..."
                   required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -209,7 +207,7 @@ const Contatti = () => {
                 type="submit"
                 className="font-face-CinzelDecorative"
               >
-                Invia!
+                Submit!
               </Button>
             </Form>
           </Col>
