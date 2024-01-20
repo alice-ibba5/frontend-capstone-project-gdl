@@ -2,7 +2,8 @@ import { Container, Image, Spinner, Col } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CalendarElement from "../Profile/CalendarXProfile/CalendarXprofile.js";
-import Carousel from "react-bootstrap/Carousel";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 import "./styles.css";
 
@@ -13,10 +14,10 @@ const Profile = () => {
   const [user, setUser] = useState({});
   const [isMounted, setIsMounted] = useState(true);
   const [index, setIndex] = useState(0);
+  const [show, setShow] = useState(false);
 
-  const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex);
-  };
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,17 +75,20 @@ const Profile = () => {
             </Col>
             <Col lg={6} className="">
               <h4 className="font-face-CinzelDecorative my-3">
-                Users che segui: <b>{user.friendId.length}</b>
+                Following:{" "}
+                <Button variant="dark" onClick={handleShow}>
+                  <b>{user.friendId.length}</b>
+                </Button>
               </h4>
               <Col className="d-flex usersSeguiti">
-                <Carousel
-                  activeIndex={index}
-                  onSelect={handleSelect}
-                  id="carousel"
-                  variant="dark"
-                >
+                <Modal show={show} onHide={handleClose}>
+                  <Modal.Header closeButton>
+                    <Modal.Title className="font-face-CinzelDecorative my-3">
+                      Following:
+                    </Modal.Title>
+                  </Modal.Header>
                   {user?.friendId?.map((friend, i) => (
-                    <Carousel.Item className="align-self-center">
+                    <Modal.Body>
                       <Link
                         to={`/users/${friend._id}`}
                         className="gdl-link align-self-center"
@@ -96,17 +100,25 @@ const Profile = () => {
                           style={{ width: "100px" }}
                         />
                       </Link>
-                      <Carousel.Caption className="carouselCaption">
-                        <p
-                          className="align-self-center font-face-CinzelDecorative carouselCaption"
-                          key={i}
-                        >
-                          {friend.name} {friend.surname}
-                        </p>
-                      </Carousel.Caption>
-                    </Carousel.Item>
+
+                      <p
+                        className="align-self-center font-face-CinzelDecorative carouselCaption"
+                        key={i}
+                      >
+                        {friend.name} {friend.surname}
+                      </p>
+                    </Modal.Body>
                   ))}
-                </Carousel>
+                  <Modal.Footer>
+                    <Button
+                      variant="secondary"
+                      onClick={handleClose}
+                      className="font-face-CinzelDecorative my-3"
+                    >
+                      Close
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
               </Col>
             </Col>
           </Container>
