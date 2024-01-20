@@ -88,7 +88,7 @@ const Profile = () => {
                     </Modal.Title>
                   </Modal.Header>
                   {user?.friendId?.map((friend, i) => (
-                    <Modal.Body>
+                    <Modal.Body className="d-flex">
                       <Link
                         to={`/users/${friend._id}`}
                         className="gdl-link align-self-center"
