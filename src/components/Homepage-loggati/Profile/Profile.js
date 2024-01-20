@@ -102,7 +102,7 @@ const Profile = () => {
                       </Link>
 
                       <p
-                        className="align-self-center font-face-CinzelDecorative carouselCaption"
+                        className="align-self-center font-face-CinzelDecorative carouselCaption ms-3"
                         key={i}
                       >
                         {friend.name} {friend.surname}
