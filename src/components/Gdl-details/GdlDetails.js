@@ -543,7 +543,7 @@ const GdlDetails = ({}) => {
                         className="gdl-link align-self-center"
                       >
                         <Image
-                          className="cover align-self-center my-3"
+                          className="cover align-self-center my-3 me-2"
                           src={user.avatar}
                           fluid
                           style={{ width: "100px" }}
