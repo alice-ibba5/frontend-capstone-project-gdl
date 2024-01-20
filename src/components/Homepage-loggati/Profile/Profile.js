@@ -79,7 +79,7 @@ const Profile = () => {
               <Col className="d-flex usersSeguiti">
                 <Carousel activeIndex={index} onSelect={handleSelect}>
                   {user?.friendId?.map((friend, i) => (
-                    <Carousel.Item>
+                    <Carousel.Item className="align-self-center">
                       <Link
                         to={`/users/${friend._id}`}
                         className="gdl-link align-self-center"
@@ -91,9 +91,9 @@ const Profile = () => {
                           style={{ width: "100px" }}
                         />
                       </Link>
-                      <Carousel.Caption>
+                      <Carousel.Caption className="carouselCaption">
                         <p
-                          className="align-self-center font-face-CinzelDecorative"
+                          className="align-self-center font-face-CinzelDecorative carouselCaption"
                           key={i}
                         >
                           {friend.name} {friend.surname}
