@@ -66,6 +66,11 @@ const GdlDetails = ({}) => {
   const handleClose5 = () => setShow5(false);
   const handleShow5 = () => setShow5(true);
 
+  const [show6, setShow6] = useState(false);
+
+  const handleClose6 = () => setShow6(false);
+  const handleShow6 = () => setShow6(true);
+
   const getGdl = async () => {
     try {
       // Ottieni i gdl dell'utente dal backend
@@ -473,13 +478,35 @@ const GdlDetails = ({}) => {
     }
   };
 
-  const handleInputChange = (fieldName, value) => {
-    setEditFormData({
-      ...editFormData,
-      [bookTitle]: value,
-      [bookAuthor]: value,
-      [bookPlot]: value,
-    });
+  const editCover = async () => {
+    const formData = new FormData();
+    formData.append("cover", file, "cover");
+
+    try {
+      let fileResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/cover`,
+        {
+          method: "PATCH",
+          body: formData,
+        }
+      );
+
+      if (fileResponse.ok) {
+        const fileDataResponse = await fileResponse.json();
+
+        setFile(formData);
+
+        setTimeout(() => {
+          window.location.href = `/gdl/${id}`;
+        }, 2000);
+      } else {
+        throw new Error(`HTTP error! Status: ${fileResponse.status}`);
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const [editFormData, setEditFormData] = useState({
@@ -493,31 +520,30 @@ const GdlDetails = ({}) => {
   });
 
   const handleEditFormDataChange = (field, value) => {
+    console.log("Campo:", field);
+    console.log("Valore:", value);
     setEditFormData((prevData) => ({
       ...prevData,
       [field]: value,
     }));
+    console.log("Nuovo stato di editFormData:", editFormData);
   };
 
   const editGdl = async (e) => {
     e.preventDefault();
-    console.log("Edit Form Data:", editFormData);
     setLoading(true);
     const textData = {
       user: user,
-      category: category,
-      bookTitle: bookTitle,
-      bookAuthor: bookAuthor,
-      bookPlot: bookPlot,
+      category: editFormData.category,
+      bookTitle: editFormData.bookTitle,
+      bookAuthor: editFormData.bookAuthor,
+      bookPlot: editFormData.bookPlot,
       readTime: {
-        value: readTime,
+        value: editFormData.readTime,
       },
-      pages: pages,
-      deadline: deadline,
+      pages: editFormData.pages,
+      deadline: editFormData.deadline,
     };
-
-    const formData = new FormData();
-    formData.append("cover", file, "cover");
 
     try {
       let textResponse = await fetch(
@@ -533,20 +559,40 @@ const GdlDetails = ({}) => {
 
       if (textResponse.ok) {
         setEditFormData(textData);
-        console.log("Updated Form Data:", editFormData);
+        toast("Gdl edited successfully!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+
+        setTimeout(() => {
+          window.location.href = `/gdl/${id}`;
+        }, 2000);
 
         const data = await textResponse.json();
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        const fileResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/cover`,
-          {
-            method: "PATCH",
-            body: formData,
-          }
-        );
-
-        if (fileResponse.ok) {
-          toast("Gdl edited successfully!", {
+  const deleteGdl = async (commentToDeleteId) => {
+    let response = await fetch(
+      `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`,
+      {
+        method: "DELETE",
+      }
+    )
+      .then((response) => {
+        if (response.ok) {
+          toast("Gdl deleted successfully!", {
             position: "bottom-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -557,23 +603,15 @@ const GdlDetails = ({}) => {
             theme: "dark",
           });
 
-          const fileDataResponse = await fileResponse.json();
-          console.log(fileDataResponse);
-
-          setFile(formData);
-
-          // setTimeout(() => {
-          //   window.location.href = `/gdl/${id}`;
-          // }, 2000);
+          setTimeout(() => {
+            window.location.href = `/gdl`;
+          }, 2000);
         } else {
-          throw new Error(`HTTP error! Status: ${fileResponse.status}`);
+          throw new Error("Something went wrong!");
         }
-      }
-    } catch (error) {
-      console.log("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
+      })
+
+      .catch((e) => console.error(e));
   };
 
   return (
@@ -596,6 +634,44 @@ const GdlDetails = ({}) => {
                     style={{ width: "300px" }}
                   />
                 </Col>
+
+                <Button
+                  variant="dark"
+                  className="font-face-CinzelDecorative align-self-center mt-3"
+                  onClick={handleShow6}
+                >
+                  Edit Cover
+                </Button>
+                <Modal show={show6} onHide={handleClose6}>
+                  <Form className="mt-3" onSubmit={editCover}>
+                    <Form.Group className="mt-3 mx-3">
+                      <Form.Label>Cover</Form.Label>
+                      <div>
+                        <input
+                          type="file"
+                          multiple={false}
+                          onChange={(e) => setFile(e.target.files[0])}
+                        />
+                      </div>
+                    </Form.Group>
+                    <Modal.Footer>
+                      <Button
+                        variant="secondary"
+                        onClick={handleClose6}
+                        className="font-face-CinzelDecorative align-self-center"
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        variant="dark"
+                        className="font-face-CinzelDecorative"
+                        type="submit"
+                      >
+                        Save Changes
+                      </Button>
+                    </Modal.Footer>
+                  </Form>
+                </Modal>
               </Container>
 
               <Col lg={6} className="mt-5">
@@ -623,6 +699,12 @@ const GdlDetails = ({}) => {
                         Category:{" "}
                       </p>{" "}
                       <p className="align-self-center">{gdlGet?.category}</p>
+                    </div>
+                    <div className="d-flex">
+                      <p className="font-face-CinzelDecorative align-self-center me-2">
+                        Pages:{" "}
+                      </p>{" "}
+                      <p className="align-self-center">{gdlGet?.pages}</p>
                     </div>
                     <div className="d-flex">
                       <p className="font-face-CinzelDecorative me-2">
@@ -739,18 +821,6 @@ const GdlDetails = ({}) => {
                       </Form.Group>
 
                       <Form.Group className="mt-3 mx-3">
-                        <Form.Label>Cover</Form.Label>
-                        <div>
-                          <input
-                            type="file"
-                            //value={file}
-                            multiple={false}
-                            onChange={(e) => setFile(e.target.files[0])}
-                          />
-                        </div>
-                      </Form.Group>
-
-                      <Form.Group className="mt-3 mx-3">
                         <Form.Label>Reading time</Form.Label>
                         <div className="d-flex align-items-center">
                           <Form.Control
@@ -764,9 +834,6 @@ const GdlDetails = ({}) => {
                                 e.target.value
                               )
                             }
-                            style={{
-                              width: 50,
-                            }}
                           />
                           <span className="ms-2">hours</span>
                         </div>
@@ -848,7 +915,7 @@ const GdlDetails = ({}) => {
                       <Button
                         className="font-face-CinzelDecorative align-self-center"
                         variant="danger"
-                        onClick={handleClose5}
+                        onClick={deleteGdl}
                       >
                         Delete
                       </Button>
