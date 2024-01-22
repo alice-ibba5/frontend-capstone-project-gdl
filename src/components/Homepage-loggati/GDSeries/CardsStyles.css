@@ -1,0 +1,30 @@
+.gdl-link {
+    text-decoration: none
+}
+
+.gdl-card {
+    box-shadow: 5px 5px 15px 5px #696969;
+}
+
+.gdl-card:hover {
+    transform: scale(105%);
+    height: 100%;
+    z-index: 2;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+@media only screen and (max-width: 600px) {
+    .gdl-card {
+        max-width: 160px;
+        height: 900px;
+    }
+    
+}
+
+@media only screen and (max-width: 600px) {
+    .gdl-cover {
+        max-width: 160px;
+    }
+    
+}

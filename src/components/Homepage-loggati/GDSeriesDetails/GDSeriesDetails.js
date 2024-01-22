@@ -1,3 +1,4 @@
+import "./styles.css";
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -12,15 +13,12 @@ import {
 } from "react-bootstrap";
 import { PencilFill, Trash3 } from "react-bootstrap-icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import Creator from "../../components/Homepage-loggati/Cards/Creator.js";
-import CalendarElement from "./Calendar.js";
-import queryString from "query-string";
-import "./GdlDetailsStyles.css";
-
+import Creator from "../../../components/Homepage-loggati/Cards/Creator.js";
+import CalendarElement from "../../Gdl-details/Calendar.js";
 // import BlogLike from "../../components/likes/BlogLike";
 import { ToastContainer, toast } from "react-toastify";
 
-const GdlDetails = ({}) => {
+const GDSeriesDetails = ({}) => {
   const [gdlGet, setGdlGet] = useState(null);
   const [comments, setComments] = useState({});
   const [loading, setLoading] = useState(true);
@@ -65,9 +63,13 @@ const GdlDetails = ({}) => {
   const handleClose6 = () => setShow6(false);
   const handleShow6 = () => setShow6(true);
 
-  const getGdl = async () => {
+  const [selectedBooks, setSelectedBooks] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [gdlXPut, setGdlXPut] = useState("");
+
+  const getGDSeries = async () => {
     try {
-      // Ottieni i gdl dell'utente dal backend
+      // Ottieni i gdSeries dell'utente dal backend
       const userResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
         {
@@ -79,12 +81,12 @@ const GdlDetails = ({}) => {
 
       if (userResponse.ok) {
         const userData = await userResponse.json();
-        const userGdl = userData.gdlId || []; // Array dei gdl dell'utente
+        const userGdl = userData.gdSeriesId || []; // Array dei gdSeries dell'utente
         setGdls(userGdl);
       }
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}`
       );
 
       if (!response.ok) {
@@ -96,13 +98,9 @@ const GdlDetails = ({}) => {
 
       // Aggiorna editFormData con i nuovi dati da gdlGet
       setEditFormData({
-        bookTitle: data?.bookTitle || "",
-        bookAuthor: data?.bookAuthor || "",
+        title: data?.title || "",
+        books: data?.books || "",
         category: data?.category || "",
-        bookPlot: data?.bookPlot || "",
-        readTime: data?.readTime?.value || "",
-        pages: data?.pages || "",
-        deadline: data?.deadline || "",
       });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -111,13 +109,13 @@ const GdlDetails = ({}) => {
   };
 
   useEffect(() => {
-    getGdl();
+    getGDSeries();
   }, []);
 
   const getComments = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/comments`
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}/comments`
       );
 
       if (!response.ok) {
@@ -148,7 +146,7 @@ const GdlDetails = ({}) => {
 
     try {
       let textResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`,
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -173,7 +171,7 @@ const GdlDetails = ({}) => {
         });
 
         setTimeout(() => {
-          window.location.href = `/gdl/${id}`;
+          window.location.href = `/gdSeries/${id}`;
         }, 2000);
       }
     } catch (error) {
@@ -202,7 +200,7 @@ const GdlDetails = ({}) => {
   const deleteComment = async (commentToDeleteId) => {
     if (commentToDeleteId) {
       let response = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/comments/${commentToDeleteId}`,
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}/comments/${commentToDeleteId}`,
         {
           method: "DELETE",
         }
@@ -221,7 +219,7 @@ const GdlDetails = ({}) => {
             });
 
             setTimeout(() => {
-              window.location.href = `/gdl/${id}`;
+              window.location.href = `/gdSeries/${id}`;
             }, 2000);
           } else {
             throw new Error("Something went wrong!");
@@ -243,7 +241,7 @@ const GdlDetails = ({}) => {
     if (commentToDeleteId) {
       try {
         let response = await fetch(
-          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/comments/${commentToDeleteId}`,
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}/comments/${commentToDeleteId}`,
           {
             method: "PUT",
             headers: {
@@ -265,7 +263,7 @@ const GdlDetails = ({}) => {
             theme: "dark",
           });
           setTimeout(() => {
-            window.location.href = `/gdl/${id}`;
+            window.location.href = `/gdSeries/${id}`;
           }, 2000);
         } else {
           toast.error("Something went wrong!", {
@@ -288,12 +286,13 @@ const GdlDetails = ({}) => {
   };
 
   const partecipaAlGdl = async () => {
+    console.log("Cliccato sul pulsante 'Join the GDSeries'");
     const storedUserId = localStorage.getItem("userId");
     const storedUserToken = localStorage.getItem("token");
     setLoading(true);
 
     try {
-      // Ottieni i gdl dell'utente dal backend
+      // Ottieni i gdSeries dell'utente dal backend
       const userResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
         {
@@ -305,32 +304,22 @@ const GdlDetails = ({}) => {
 
       if (userResponse.ok) {
         const userData = await userResponse.json();
-        const userGdl = userData.gdlId || []; // Array dei gdl dell'utente
+        const userGdl = userData.gdSeriesId || []; // Array dei gdSeries dell'utente
         setGdls(userGdl);
         console.log("userGdl is: ", userGdl);
 
-        // Verifica se il gdl è già presente nell'array dei gdl dell'utente
-        let isGdlAlreadyAdded = false;
+        // Verifica se il gdSeries è già presente nell'array dei gdSeries dell'utente
+        const isGdlAlreadyAdded = userGdl.some(
+          (gdSeriesId) => gdSeriesId === id
+        );
 
-        for (const userObj of userGdl) {
-          for (const key in userObj) {
-            if (userObj.hasOwnProperty(key) && userObj[key] === id) {
-              isGdlAlreadyAdded = true;
-              break;
-            }
-          }
-
-          if (isGdlAlreadyAdded) {
-            break;
-          }
-        }
-        console.log(isGdlAlreadyAdded);
+        console.log("isGdlAlreadyAdded:", isGdlAlreadyAdded);
         if (!isGdlAlreadyAdded) {
-          // Aggiungi il gdl all'array dei gdl dell'utente
+          // Aggiungi il gdSeries all'array dei gdSeries dell'utente
           const newGdl = [...userGdl];
           newGdl.push(id);
 
-          // Invia la richiesta di aggiornamento dei gdl dell'utente al backend
+          // Invia la richiesta di aggiornamento dei gdSeries dell'utente al backend
           const updateResponse = await fetch(
             `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
             {
@@ -339,18 +328,18 @@ const GdlDetails = ({}) => {
                 Authorization: "Bearer " + storedUserToken,
               },
               method: "PUT",
-              body: JSON.stringify({ gdlId: newGdl }),
+              body: JSON.stringify({ gdSeriesId: newGdl }),
             }
           );
 
           if (updateResponse.ok) {
-            // Aggiungi il gdl all'array events utilizzando push
+            // Aggiungi il gdSeries all'array events utilizzando push
             setGdl(newGdl);
             setGdlId(id);
             setIsFollowing(true);
           }
 
-          toast("Gdl added to your dashboard successfully!", {
+          toast("GDSeries added to your dashboard successfully!", {
             position: "bottom-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -360,9 +349,15 @@ const GdlDetails = ({}) => {
             progress: undefined,
             theme: "dark",
           });
+
+          //   setTimeout(() => {
+          //     window.location.href = `/gdSeries/${id}`;
+          //   }, 2000);
+          console.log("GDSeries added to your dashboard successfully!");
         } else {
-          // Il gdl è già presente nell'array dei gdl dell'utente
-          toast.warn("Gdl is already added to your dashboard!", {
+          // Il gdSeries è già presente nell'array dei gdl dell'utente
+          console.log("GDSeries is already added to your dashboard!");
+          toast.warn("GDSeries is already added to your dashboard!", {
             position: "bottom-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -377,18 +372,18 @@ const GdlDetails = ({}) => {
       }
 
       /*INIZIA PROVA AGGIUNTA UTENTE CHE PARTECIPA AL GDL */
-      // Ottieni gli utenti che partecipano al gdl dal backend
+      // Ottieni gli utenti che partecipano al gdSeries dal backend
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}`
       );
 
       if (response.ok) {
         const gdlData = await response.json();
         console.log(gdlData);
-        const gdlUser = gdlData.userId || []; // Array dei gdl dell'utente
+        const gdlUser = gdlData.userId || []; // Array dei gdSeries dell'utente
         console.log(gdlUser);
 
-        // Verifica se l'utente è già presente nell'array degli utenti del gdl
+        // Verifica se l'utente è già presente nell'array degli utenti del gdSeries
         let isUserAlreadyAdded = false;
 
         for (const userObj of gdlUser) {
@@ -409,16 +404,16 @@ const GdlDetails = ({}) => {
 
         console.log("isUserAlreadyAdded is:" + isUserAlreadyAdded);
         if (!isUserAlreadyAdded) {
-          // Aggiungi l'utente all'array degli utenti del gdl
+          // Aggiungi l'utente all'array degli utenti del gdSeries
           const newUser = [...gdlUser];
           newUser.push(storedUserId);
 
           console.log("Before update - gdlUser:", gdlUser);
           console.log("Adding user:", storedUserId);
 
-          // Invia la richiesta di aggiornamento degli utenti del gdl al backend
+          // Invia la richiesta di aggiornamento degli utenti del gdSeries al backend
           const updatedResponse = await fetch(
-            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`,
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -429,13 +424,13 @@ const GdlDetails = ({}) => {
           );
 
           if (updatedResponse.ok) {
-            // Aggiungi il gdl all'array events utilizzando push
+            // Aggiungi il gdSeries all'array dei gdSeries utilizzando push
             setUser(newUser);
           }
 
           setUserId(storedUserId);
 
-          toast("User added to the gdl dashboard successfully!", {
+          toast("User added to the GDSeries dashboard successfully!", {
             position: "bottom-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -447,11 +442,11 @@ const GdlDetails = ({}) => {
           });
 
           setTimeout(() => {
-            window.location.href = `/gdl/${id}`;
+            window.location.href = `/gdSeries/${id}`;
           }, 2000);
         } else {
-          // L'utente è già presente nell'array dei gdl dell'utente
-          toast.warn("User is already added to the gdl dashboard!", {
+          // L'utente è già presente nell'array dei gdSeries dell'utente
+          toast.warn("User is already added to the GDSeries dashboard!", {
             position: "bottom-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -478,7 +473,7 @@ const GdlDetails = ({}) => {
 
     try {
       let fileResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}/cover`,
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}/cover`,
         {
           method: "PATCH",
           body: formData,
@@ -503,24 +498,26 @@ const GdlDetails = ({}) => {
     }
   };
 
+  const convertStringsToObjectIdArray = (stringArray) => {
+    return stringArray.map((str) => ({ _id: str }));
+  };
+
   const [editFormData, setEditFormData] = useState({
-    bookTitle: gdlGet?.bookTitle || "",
-    bookAuthor: gdlGet?.bookAuthor || "",
-    bookPlot: gdlGet?.bookPlot || "",
+    title: gdlGet?.title || "",
     category: gdlGet?.category || "",
-    readTime: gdlGet?.readTime?.value || "",
-    pages: gdlGet?.pages || "",
-    deadline: gdlGet?.deadline || "",
+    books: gdlGet?.books ? convertStringsToObjectIdArray(gdlGet.books) : [],
   });
 
   const handleEditFormDataChange = (field, value) => {
-    console.log("Campo:", field);
-    console.log("Valore:", value);
-    setEditFormData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-    console.log("Nuovo stato di editFormData:", editFormData);
+    setEditFormData(
+      (prevData) => ({
+        ...prevData,
+        [field]: value,
+      }),
+      () => {
+        console.log("Nuovo stato di editFormData:", editFormData);
+      }
+    );
   };
 
   const editGdl = async (e) => {
@@ -529,19 +526,13 @@ const GdlDetails = ({}) => {
     const textData = {
       user: user,
       category: editFormData.category,
-      bookTitle: editFormData.bookTitle,
-      bookAuthor: editFormData.bookAuthor,
-      bookPlot: editFormData.bookPlot,
-      readTime: {
-        value: editFormData.readTime,
-      },
-      pages: editFormData.pages,
-      deadline: editFormData.deadline,
+      title: editFormData.title,
+      books: editFormData.books,
     };
 
     try {
       let textResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`,
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -553,7 +544,7 @@ const GdlDetails = ({}) => {
 
       if (textResponse.ok) {
         setEditFormData(textData);
-        toast("Gdl edited successfully!", {
+        toast("GDSeries edited successfully!", {
           position: "bottom-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -565,7 +556,7 @@ const GdlDetails = ({}) => {
         });
 
         setTimeout(() => {
-          window.location.href = `/gdl/${id}`;
+          window.location.href = `/gdSeries/${id}`;
         }, 2000);
 
         const data = await textResponse.json();
@@ -579,14 +570,14 @@ const GdlDetails = ({}) => {
 
   const deleteGdl = async (commentToDeleteId) => {
     let response = await fetch(
-      `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`,
+      `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}`,
       {
         method: "DELETE",
       }
     )
       .then((response) => {
         if (response.ok) {
-          toast("Gdl deleted successfully!", {
+          toast("GDSeries deleted successfully!", {
             position: "bottom-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -598,7 +589,7 @@ const GdlDetails = ({}) => {
           });
 
           setTimeout(() => {
-            window.location.href = `/gdl`;
+            window.location.href = `/gdSeries`;
           }, 2000);
         } else {
           throw new Error("Something went wrong!");
@@ -606,6 +597,50 @@ const GdlDetails = ({}) => {
       })
 
       .catch((e) => console.error(e));
+  };
+
+  useEffect(() => {
+    const getGdlXPut = async () => {
+      setLoading(true);
+      try {
+        let response = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl`,
+          {
+            method: "GET",
+            mode: "cors",
+          }
+        );
+
+        if (response.ok) {
+          let data = await response.json();
+          setGdlXPut(data);
+
+          setLoading(false);
+        } else {
+          console.log("error");
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    };
+    if (gdl.length === 0) {
+      getGdlXPut();
+    }
+  }, [gdl.length]);
+
+  const handleSelectChange = (e) => {
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setSelectedBooks(selectedOptions);
+
+    setEditFormData((prevData) => ({
+      ...prevData,
+      books: convertStringsToObjectIdArray(selectedOptions),
+    }));
   };
 
   return (
@@ -669,253 +704,158 @@ const GdlDetails = ({}) => {
               </Container>
 
               <Col lg={6} className="mt-5">
-                <h4 className="font-face-CinzelDecorative">Trama del libro:</h4>
-                <div>{gdlGet?.bookPlot}</div>
-                <hr></hr>
+                <div className="blog-details-author">
+                  <Link
+                    to={
+                      gdlGet?.user?._id === storedUserId
+                        ? `/users/me/${storedUserId}`
+                        : `/users/${gdlGet?.user?._id}`
+                    }
+                    className="gdl-link align-self-center"
+                    style={{ color: "black" }}
+                  >
+                    <Creator {...gdlGet?.user} />
+                  </Link>
+                </div>
 
-                <div className="blog-details-container mt-3">
-                  <div className="blog-details-author">
-                    <Link
-                      to={
-                        gdlGet?.user?._id === storedUserId
-                          ? `/users/me/${storedUserId}`
-                          : `/users/${gdlGet?.user?._id}`
-                      }
-                      className="gdl-link align-self-center"
-                      style={{ color: "black" }}
-                    >
-                      <Creator {...gdlGet?.user} />
-                    </Link>
-                  </div>
-                  <div className="blog-details-info mt-3">
-                    <div className="d-flex">
-                      <p className="font-face-CinzelDecorative align-self-center me-2">
-                        Category:{" "}
-                      </p>{" "}
-                      <p className="align-self-center">{gdlGet?.category}</p>
-                    </div>
-                    <div className="d-flex">
-                      <p className="font-face-CinzelDecorative align-self-center me-2">
-                        Pages:{" "}
-                      </p>{" "}
-                      <p className="align-self-center">{gdlGet?.pages}</p>
-                    </div>
-                    <div className="d-flex">
-                      <p className="font-face-CinzelDecorative me-2">
-                        Reading time:{" "}
-                      </p>{" "}
-                      <p>{`${gdlGet?.readTime.value} ${gdlGet?.readTime.unit}`}</p>
-                    </div>
-                    <div className="d-flex">
-                      <p className="font-face-CinzelDecorative me-2">
-                        Deadline:{" "}
-                      </p>{" "}
-                      <p>{gdlGet?.deadline}</p>
-                    </div>
-                    <div
-                      style={{
-                        marginTop: 20,
-                      }}
-                    >
-                      {/* <BlogLike defaultLikes={["123"]} onChange={console.log} /> */}
-                    </div>
-                  </div>
-                  {gdls && gdls.some((gdl) => gdl._id === id) ? (
-                    <Button
-                      variant="dark"
-                      className="font-face-CinzelDecorative align-self-center partecipiGià"
-                      disabled
-                    >
-                      Already joined
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="dark"
-                      className="font-face-CinzelDecorative align-self-center"
-                      onClick={isFollowing ? null : () => partecipaAlGdl(id)}
-                    >
-                      Join the GDL!
-                    </Button>
-                  )}
-
+                {gdls && gdls.some((gdl) => gdl._id === id) ? (
                   <Button
                     variant="dark"
-                    className="font-face-CinzelDecorative align-self-center editGdl mx-3"
-                    onClick={handleShow4}
+                    className="font-face-CinzelDecorative align-self-center partecipiGià"
+                    disabled
                   >
-                    Edit
+                    Already joined
                   </Button>
-                  <Modal show={show4} onHide={handleClose4}>
-                    <Modal.Header closeButton>
-                      <Modal.Title className="font-face-CinzelDecorative align-self-center">
-                        Edit the GDL
-                      </Modal.Title>
-                    </Modal.Header>
-
-                    <Form className="mt-3" onSubmit={editGdl}>
-                      <Form.Group controlId="blog-form" className="mt-3 mx-3">
-                        <Form.Label>Title</Form.Label>
-                        <Form.Control
-                          size="lg"
-                          placeholder="Title"
-                          required
-                          value={editFormData.bookTitle}
-                          onChange={(e) =>
-                            handleEditFormDataChange(
-                              "bookTitle",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Form.Group>
-
-                      <Form.Group controlId="blog-form" className="mt-3 mx-3">
-                        <Form.Label>Author</Form.Label>
-                        <Form.Control
-                          size="lg"
-                          placeholder="Author"
-                          required
-                          value={editFormData.bookAuthor}
-                          onChange={(e) =>
-                            handleEditFormDataChange(
-                              "bookAuthor",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Form.Group>
-
-                      <Form.Group controlId="blog-form" className="mt-3 mx-3">
-                        <Form.Label>Plot</Form.Label>
-                        <Form.Control
-                          size="lg"
-                          placeholder="Plot"
-                          required
-                          value={editFormData.bookPlot}
-                          onChange={(e) =>
-                            handleEditFormDataChange("bookPlot", e.target.value)
-                          }
-                        />
-                      </Form.Group>
-
-                      <Form.Group
-                        controlId="blog-category"
-                        className="mt-3 mx-3"
-                      >
-                        <Form.Label>Category</Form.Label>
-                        <Form.Control
-                          size="lg"
-                          placeholder="Category"
-                          required
-                          value={editFormData.category}
-                          onChange={(e) =>
-                            handleEditFormDataChange("category", e.target.value)
-                          }
-                        ></Form.Control>
-                      </Form.Group>
-
-                      <Form.Group className="mt-3 mx-3">
-                        <Form.Label>Reading time</Form.Label>
-                        <div className="d-flex align-items-center">
-                          <Form.Control
-                            size="lg"
-                            placeholder="Reading time"
-                            required
-                            value={editFormData.readTime}
-                            onChange={(e) =>
-                              handleEditFormDataChange(
-                                "readTime",
-                                e.target.value
-                              )
-                            }
-                          />
-                          <span className="ms-2">hours</span>
-                        </div>
-                      </Form.Group>
-
-                      <Form.Group
-                        controlId="blog-category"
-                        className="mt-3 mx-3"
-                      >
-                        <Form.Label>Pages</Form.Label>
-                        <Form.Control
-                          size="lg"
-                          placeholder="Pages"
-                          required
-                          value={editFormData.pages}
-                          onChange={(e) =>
-                            handleEditFormDataChange("pages", e.target.value)
-                          }
-                        ></Form.Control>
-                      </Form.Group>
-
-                      <Form.Group
-                        controlId="blog-category"
-                        className="mt-3 mx-3"
-                      >
-                        <Form.Label>Deadline</Form.Label>
-                        <Form.Control
-                          size="lg"
-                          placeholder="Deadline"
-                          required
-                          value={editFormData.deadline}
-                          onChange={(e) =>
-                            handleEditFormDataChange("deadline", e.target.value)
-                          }
-                        ></Form.Control>
-                      </Form.Group>
-
-                      <Modal.Footer>
-                        <Button
-                          variant="secondary"
-                          onClick={handleClose4}
-                          className="font-face-CinzelDecorative align-self-center"
-                        >
-                          Close
-                        </Button>
-                        <Button
-                          variant="primary"
-                          className="font-face-CinzelDecorative editGdl"
-                          type="submit"
-                        >
-                          Save Changes
-                        </Button>
-                      </Modal.Footer>
-                    </Form>
-                  </Modal>
-
+                ) : (
                   <Button
-                    variant="danger"
+                    variant="dark"
                     className="font-face-CinzelDecorative align-self-center"
-                    onClick={handleShow5}
+                    onClick={() => {
+                      if (!isFollowing) {
+                        partecipaAlGdl(id);
+                        setIsFollowing(true); // Imposta immediatamente isFollowing a true
+                      }
+                    }}
+                    disabled={isFollowing} // Disabilita il pulsante quando isFollowing è true
                   >
-                    Delete
+                    {isFollowing ? "Already joined" : "Join the GDSeries"}
                   </Button>
-                  <Modal show={show5} onHide={handleClose5}>
-                    <Modal.Header closeButton>
-                      <Modal.Title className="font-face-CinzelDecorative align-self-center">
-                        Delete the GDL
-                      </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>Are you sure you want to delete it?</Modal.Body>
+                )}
+
+                <Button
+                  variant="dark"
+                  className="font-face-CinzelDecorative align-self-center editGdl mx-3"
+                  onClick={handleShow4}
+                >
+                  Edit
+                </Button>
+                <Modal show={show4} onHide={handleClose4}>
+                  <Modal.Header closeButton>
+                    <Modal.Title className="font-face-CinzelDecorative align-self-center">
+                      Edit
+                    </Modal.Title>
+                  </Modal.Header>
+
+                  <Form className="mt-3" onSubmit={editGdl}>
+                    <Form.Group controlId="blog-form" className="mt-3 mx-3">
+                      <Form.Label>Title</Form.Label>
+                      <Form.Control
+                        size="lg"
+                        placeholder="Title"
+                        required
+                        value={editFormData.title}
+                        onChange={(e) =>
+                          handleEditFormDataChange("title", e.target.value)
+                        }
+                      />
+                    </Form.Group>
+
+                    <Form.Group controlId="blog-category" className="mt-3 mx-3">
+                      <Form.Label>Category</Form.Label>
+                      <Form.Control
+                        size="lg"
+                        placeholder="Category"
+                        required
+                        value={editFormData.category}
+                        onChange={(e) =>
+                          handleEditFormDataChange("category", e.target.value)
+                        }
+                      ></Form.Control>
+                    </Form.Group>
+
+                    <Form.Select
+                      aria-label="Default select example"
+                      multiple={true}
+                      className="mt-3 mx-3 p-0"
+                      value={editFormData.books.map((book) => book._id)}
+                      onChange={handleSelectChange}
+                      style={{ width: "94%" }}
+                    >
+                      {Array.isArray(gdlXPut) &&
+                        gdlXPut?.map((gdl, i) => {
+                          return (
+                            <option key={gdl._id} value={gdl._id}>
+                              <Image
+                                src={gdl.cover}
+                                fluid
+                                style={{ width: "20px" }}
+                              />
+                              {gdl.bookTitle}
+                            </option>
+                          );
+                        })}
+                    </Form.Select>
+
                     <Modal.Footer>
                       <Button
-                        className="font-face-CinzelDecorative align-self-center"
                         variant="secondary"
-                        onClick={handleClose5}
+                        onClick={handleClose4}
+                        className="font-face-CinzelDecorative align-self-center"
                       >
                         Close
                       </Button>
                       <Button
-                        className="font-face-CinzelDecorative align-self-center"
-                        variant="danger"
-                        onClick={deleteGdl}
+                        variant="primary"
+                        className="font-face-CinzelDecorative editGdl"
+                        type="submit"
                       >
-                        Delete
+                        Save Changes
                       </Button>
                     </Modal.Footer>
-                  </Modal>
-                </div>
+                  </Form>
+                </Modal>
+
+                <Button
+                  variant="danger"
+                  className="font-face-CinzelDecorative align-self-center"
+                  onClick={handleShow5}
+                >
+                  Delete
+                </Button>
+                <Modal show={show5} onHide={handleClose5}>
+                  <Modal.Header closeButton>
+                    <Modal.Title className="font-face-CinzelDecorative align-self-center">
+                      Delete the GDL
+                    </Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>Are you sure you want to delete it?</Modal.Body>
+                  <Modal.Footer>
+                    <Button
+                      className="font-face-CinzelDecorative align-self-center"
+                      variant="secondary"
+                      onClick={handleClose5}
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      className="font-face-CinzelDecorative align-self-center"
+                      variant="danger"
+                      onClick={deleteGdl}
+                    >
+                      Delete
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
               </Col>
             </Container>
 
@@ -1188,4 +1128,4 @@ const GdlDetails = ({}) => {
   );
 };
 
-export default GdlDetails;
+export default GDSeriesDetails;

@@ -1,6 +1,6 @@
 import { Col, Container, Row } from "react-bootstrap";
-import logo from "../../assets/gdl-senza-sfondo.png";
-import libri from "../../assets/libri-volanti.jpg";
+import logo from "../../../assets/gdl-senza-sfondo.png";
+import libri from "../../../assets/libri-volanti.jpg";
 import "./ChiSiamoStyles.css";
 
 function ChiSiamo() {

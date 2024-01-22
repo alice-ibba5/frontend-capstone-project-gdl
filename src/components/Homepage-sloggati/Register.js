@@ -145,7 +145,7 @@ function Register() {
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="font-face-CinzelDecorative">
-            Registrati in questo magico mondo ✨
+            Sign up to this magical world ✨
           </Modal.Title>
         </Modal.Header>
 

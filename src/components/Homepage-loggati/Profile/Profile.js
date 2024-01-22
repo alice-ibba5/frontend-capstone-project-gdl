@@ -1,4 +1,4 @@
-import { Container, Image, Spinner, Col } from "react-bootstrap";
+import { Container, Image, Spinner, Form, Col } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CalendarElement from "../Profile/CalendarXProfile/CalendarXprofile.js";
@@ -15,6 +15,7 @@ const Profile = () => {
   const [isMounted, setIsMounted] = useState(true);
   const [index, setIndex] = useState(0);
   const [show, setShow] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -88,28 +89,48 @@ const Profile = () => {
                       Following:
                     </Modal.Title>
                   </Modal.Header>
-                  {user?.friendId?.map((friend, i) => (
-                    <Modal.Body className="d-flex">
-                      <Link
-                        to={`/users/${friend._id}`}
-                        className="gdl-link align-self-center"
-                      >
-                        <Image
-                          className="avatar mb-3 me-2"
-                          src={friend.avatar}
-                          fluid
-                          style={{ width: "100px" }}
-                        />
-                      </Link>
+                  <Form className="d-flex mx-5">
+                    <Form.Control
+                      type="search"
+                      placeholder="Search"
+                      className="me-2"
+                      aria-label="Search"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </Form>
+                  {user?.friendId
+                    ?.filter(
+                      (b) =>
+                        b.name
+                          ?.toLowerCase()
+                          .includes(searchQuery?.toLowerCase()) ||
+                        b.surname
+                          ?.toLowerCase()
+                          .includes(searchQuery?.toLowerCase())
+                    )
+                    .map((friend, i) => (
+                      <Modal.Body className="d-flex">
+                        <Link
+                          to={`/users/${friend._id}`}
+                          className="gdl-link align-self-center"
+                        >
+                          <Image
+                            className="avatar mb-3 me-2"
+                            src={friend.avatar}
+                            fluid
+                            style={{ width: "100px" }}
+                          />
+                        </Link>
 
-                      <p
-                        className="align-self-center font-face-CinzelDecorative carouselCaption ms-3"
-                        key={i}
-                      >
-                        {friend.name} {friend.surname}
-                      </p>
-                    </Modal.Body>
-                  ))}
+                        <p
+                          className="align-self-center font-face-CinzelDecorative carouselCaption ms-3"
+                          key={i}
+                        >
+                          {friend.name} {friend.surname}
+                        </p>
+                      </Modal.Body>
+                    ))}
                   <Modal.Footer>
                     <Button
                       variant="secondary"
@@ -153,6 +174,45 @@ const Profile = () => {
                       key={index}
                     >
                       {gdl.bookTitle}
+                    </p>
+                  </Col>
+                </>
+              ))}
+            </Container>
+          </Container>
+          <hr></hr>
+
+          <Container className="container-gdl p-0">
+            <h4 className="font-face-CinzelDecorative my-3">
+              GDSeries attended:{" "}
+            </h4>
+            <Container className="d-flex flex-row flex-wrap">
+              {user?.gdSeriesId?.map((gdSerie, index) => (
+                <>
+                  <Col
+                    xl={2}
+                    lg={3}
+                    md={4}
+                    sm={6}
+                    xs={6}
+                    className="d-flex flex-column"
+                  >
+                    <Link
+                      to={`/gdSeries/${gdSerie?._id}`}
+                      className="gdl-link align-self-center"
+                    >
+                      <Image
+                        className="cover mb-3"
+                        src={gdSerie.cover}
+                        fluid
+                        style={{ width: "100px" }}
+                      />
+                    </Link>
+                    <p
+                      className="align-self-center font-face-CinzelDecorative"
+                      key={index}
+                    >
+                      {gdSerie.title}
                     </p>
                   </Col>
                 </>

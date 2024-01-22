@@ -1,24 +1,21 @@
 import { useState, useEffect } from "react";
-import { Button, Form, Container } from "react-bootstrap";
-
-import { Navigate, useNavigate } from "react-router-dom";
+import { Button, Form, Container, Image } from "react-bootstrap";
+import { Navigate, useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import queryString from "query-string";
 import "react-toastify/dist/ReactToastify.css";
 
-function NuovaProposta() {
+function NuovoGDSeries() {
   const [blog, setBlog] = useState();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState("");
   const [category, setCategory] = useState("");
-  const [bookTitle, setBookTitle] = useState("");
-  const [bookAuthor, setBookAuthor] = useState("");
-  const [bookPlot, setBookPlot] = useState("");
-  const [readTime, setReadTime] = useState("");
-  const [pages, setPages] = useState("");
-  const [deadline, setDeadline] = useState("");
+  const [title, setTitle] = useState("");
+  const [books, setBooks] = useState([]);
   const [file, setFile] = useState(null);
+  const [gdl, setGdl] = useState([]);
   const navigate = useNavigate();
+  const [selectedBooks, setSelectedBooks] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,14 +23,8 @@ function NuovaProposta() {
     const textData = {
       user: user,
       category: category,
-      bookTitle: bookTitle,
-      bookAuthor: bookAuthor,
-      bookPlot: bookPlot,
-      readTime: {
-        value: readTime,
-      },
-      pages: pages,
-      deadline: deadline,
+      title: title,
+      books: books,
     };
 
     const formData = new FormData();
@@ -41,7 +32,7 @@ function NuovaProposta() {
 
     try {
       let textResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl`,
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -58,7 +49,7 @@ function NuovaProposta() {
         const { _id } = data;
 
         const fileResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${_id}/cover`,
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${_id}/cover`,
           {
             method: "PATCH",
             body: formData,
@@ -66,7 +57,7 @@ function NuovaProposta() {
         );
 
         if (fileResponse.ok) {
-          toast("Gdl created successfully!", {
+          toast("GDSeries created successfully!", {
             position: "bottom-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -83,7 +74,7 @@ function NuovaProposta() {
           setFile(formData);
 
           setTimeout(() => {
-            window.location.href = "/gdl";
+            window.location.href = "/gdSeries";
           }, 2000);
         } else {
           throw new Error(`HTTP error! Status: ${fileResponse.status}`);
@@ -94,7 +85,6 @@ function NuovaProposta() {
     } finally {
       setLoading(false);
     }
-    // getPosts();
   };
 
   useEffect(() => {
@@ -105,6 +95,47 @@ function NuovaProposta() {
     }
   }, []);
 
+  useEffect(() => {
+    const getGdl = async () => {
+      setLoading(true);
+      try {
+        let response = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl`,
+          {
+            method: "GET",
+            mode: "cors",
+          }
+        );
+
+        if (response.ok) {
+          let data = await response.json();
+          setGdl(data);
+
+          setLoading(false);
+        } else {
+          console.log("error");
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    };
+    if (gdl.length === 0) {
+      getGdl();
+    }
+  }, [gdl.length]);
+
+  const handleSelectChange = (e) => {
+    // Ottieni tutti gli elementi selezionati dall'opzione
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setSelectedBooks(selectedOptions);
+    setBooks(selectedOptions);
+  };
+
   return (
     <Container className="new-blog-container">
       <Form className="mt-5" onSubmit={handleSubmit}>
@@ -114,32 +145,8 @@ function NuovaProposta() {
             size="lg"
             placeholder="Title"
             required
-            value={bookTitle}
-            onChange={(e) => setBookTitle(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="blog-form" className="mt-3">
-          <Form.Label>Author</Form.Label>
-          <Form.Control
-            size="lg"
-            placeholder="Author"
-            required
-            value={bookAuthor}
-            onChange={(e) => setBookAuthor(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="blog-form" className="mt-3">
-          <Form.Label>Plot</Form.Label>
-          <Form.Control
-            as="textarea"
-            aria-label="With textarea"
-            size="lg"
-            placeholder="Plot"
-            required
-            value={bookPlot}
-            onChange={(e) => setBookPlot(e.target.value)}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </Form.Group>
 
@@ -176,43 +183,37 @@ function NuovaProposta() {
           </div>
         </Form.Group>
 
+        <Form.Select
+          aria-label="Default select example"
+          multiple={true}
+          className="mt-3"
+          value={selectedBooks}
+          onChange={handleSelectChange}
+        >
+          {gdl?.map((gdl, i) => {
+            return (
+              <option value={gdl._id}>
+                <Image src={gdl.cover} fluid style={{ width: "20px" }} />
+                {gdl.bookTitle}
+              </option>
+            );
+          })}
+        </Form.Select>
+
         <Form.Group className="mt-3">
-          <Form.Label>Reading time</Form.Label>
-          <div className="d-flex align-items-center">
-            <Form.Control
-              size="lg"
-              placeholder="3"
-              required
-              value={readTime}
-              onChange={(e) => setReadTime(e.target.value)}
+          <Form.Label>Il libro non è presente?</Form.Label>
+          <Link to={"/nuova-proposta"}>
+            <Button
+              variant="dark"
+              className="font-face-CinzelDecorative ms-3"
               style={{
-                width: 100,
+                backgroundColor: "#B68FB2",
+                borderColor: "#B68FB2",
               }}
-            />
-            <span className="ms-2">hours</span>
-          </div>
-        </Form.Group>
-
-        <Form.Group controlId="blog-category" className="mt-3">
-          <Form.Label>Pages</Form.Label>
-          <Form.Control
-            size="lg"
-            placeholder="Pages"
-            required
-            value={pages}
-            onChange={(e) => setPages(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        <Form.Group controlId="blog-category" className="mt-3">
-          <Form.Label>Deadline</Form.Label>
-          <Form.Control
-            size="lg"
-            placeholder="gg/mm/aaaa"
-            required
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-          ></Form.Control>
+            >
+              Add a book!
+            </Button>
+          </Link>
         </Form.Group>
 
         <Form.Group className="d-flex mt-3 justify-content-end">
@@ -254,4 +255,4 @@ function NuovaProposta() {
   );
 }
 
-export default NuovaProposta;
+export default NuovoGDSeries;

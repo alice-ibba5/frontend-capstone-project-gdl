@@ -159,7 +159,7 @@ function Login() {
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="font-face-CinzelDecorative">
-            Entra in questo magico mondo ✨
+            Enter this magical world ✨
           </Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleLogin}>

@@ -2,9 +2,12 @@ import "./App.css";
 import NavBar from "./components/Navbar/Navbar.js";
 import HomeSlog from "./components/Homepage-sloggati/HomeSlog.js";
 import HomeLog from "./components/Homepage-loggati/HomeLog.js";
-import ChiSiamo from "./components/Homepage-loggati/ChiSiamo.js";
+import GDSeries from "./components/Homepage-loggati/GDSeries/GDSeries.js";
+import ChiSiamo from "./components/Homepage-loggati/ChiSiamo/ChiSiamo.js";
 import NuovaProposta from "./components/Homepage-loggati/NuovaProposta.js";
+import NuovoGDSeries from "./components/Homepage-loggati/NuovoGDSeries/NuovoGDSeries.js";
 import GdlDetails from "./components/Gdl-details/GdlDetails.js";
+import GDSeriesDetails from "./components/Homepage-loggati/GDSeriesDetails/GDSeriesDetails.js";
 import Footer from "./components/Homepage-loggati/Footer/Footer.js";
 import Contatti from "./components/Homepage-loggati/Contatti/Contatti.js";
 import Profile from "./components/Homepage-loggati/Profile/Profile.js";
@@ -29,7 +32,22 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/chi-siamo" element={<ChiSiamo />} />
+        <Route
+          path="/gdseries"
+          element={
+            <PrivateRoute>
+              <GDSeries />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/chi-siamo"
+          element={
+            <PrivateRoute>
+              <ChiSiamo />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/contatti"
           element={
@@ -47,10 +65,26 @@ function App() {
           }
         />
         <Route
+          path="/nuovo-gdseries"
+          element={
+            <PrivateRoute>
+              <NuovoGDSeries />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/gdl/:id"
           element={
             <PrivateRoute>
               <GdlDetails />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/gdSeries/:id"
+          element={
+            <PrivateRoute>
+              <GDSeriesDetails />
             </PrivateRoute>
           }
         />
@@ -63,7 +97,7 @@ function App() {
           }
         />
         <Route
-          path="/users/:userId"
+          path="/users/:_id"
           element={
             <PrivateRoute>
               <OtherProfile />

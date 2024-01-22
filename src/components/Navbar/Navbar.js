@@ -79,10 +79,12 @@ function NavBar({ searchQuery, setSearchQuery }) {
             className="me-auto my-2 my-lg-0"
             style={{ backgroundColor: "#F4ECE8" }}
           >
-            <Nav.Link href="/gdl">Home</Nav.Link>
+            <Nav.Link href="/gdl">GDL</Nav.Link>
+            <Nav.Link href="/gdseries">GDSeries</Nav.Link>
             <Nav.Link href="/chi-siamo">Who we are</Nav.Link>
             <Nav.Link href="/contatti">Contacts</Nav.Link>
-            <Nav.Link href="/nuova-proposta">Create a GDL!</Nav.Link>
+            <Nav.Link href="/nuova-proposta">Create a GDL</Nav.Link>
+            <Nav.Link href="/nuovo-gdseries">Create a GDSeries</Nav.Link>
           </Nav>
 
           <Form className="d-flex">
