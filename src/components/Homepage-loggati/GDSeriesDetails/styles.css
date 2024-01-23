@@ -1,0 +1,19 @@
+/* CSS for alternating alignment and dotted line */
+#contenitore {
+    position: relative;
+  }
+  
+  #contenitore::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 20%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 90%;
+    background-color: #000; /* Change color as needed */
+    z-index: -1;
+  }
+  
+ 
+  

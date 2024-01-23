@@ -871,32 +871,48 @@ const GDSeriesDetails = ({}) => {
                 </Modal>
                 <hr></hr>
 
-                <div className="d-flex flex-column align-items-center">
+                <div
+                  className="d-flex flex-column justify-content-center"
+                  id="contenitore"
+                >
                   <h4 className="font-face-CinzelDecorative align-self-center">
                     Path to follow:
                   </h4>
                   {Array.isArray(booksDetails) &&
                     booksDetails.map((gdl, index) => (
                       <>
-                        <Col lg={3}>
-                          <Link
-                            to={`/gdl/${gdl._id}`}
-                            className="gdl-link align-self-center"
-                          >
-                            <Image
-                              className="cover align-self-center my-3"
-                              src={gdl?.cover}
-                              fluid
+                        <div className="d-flex ">
+                          <Col lg={3}>
+                            <Link
+                              to={`/gdl/${gdl._id}`}
+                              className="gdl-link align-self-center"
+                            >
+                              <Image
+                                className="cover align-self-center my-3 cover"
+                                id="cover"
+                                src={gdl?.cover}
+                                fluid
+                                style={{ width: "400px" }}
+                              />
+                            </Link>
+                            <p
+                              className="align-self-center font-face-CinzelDecorative"
+                              id="scritta"
+                              key={index}
                               style={{ width: "100px" }}
-                            />
-                          </Link>
-                          <p
-                            className="align-self-center font-face-CinzelDecorative"
-                            key={index}
-                          >
-                            {gdl?.bookTitle}
-                          </p>
-                        </Col>
+                            >
+                              {gdl?.bookTitle}
+                            </p>
+                          </Col>
+                          <Col lg={3} className="ms-3" id="deadline">
+                            <div>
+                              <p className="font-face-CinzelDecorative">
+                                Deadline:{" "}
+                              </p>
+                              <p>{gdl?.deadline}</p>
+                            </div>
+                          </Col>
+                        </div>
                       </>
                     ))}
                 </div>
