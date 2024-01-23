@@ -95,7 +95,7 @@ const OtherProfile = () => {
     };
   }, [_id, storedUserId, storedUserToken, isMounted]);
 
-  const segui = async () => {
+  const follow = async () => {
     const storedUserId = localStorage.getItem("userId");
     const storedUserToken = localStorage.getItem("token");
     setLoading(true);
@@ -117,21 +117,6 @@ const OtherProfile = () => {
         const userFriends = userData.friendId || []; // Array degli amici dell'utente
 
         console.log("friends is: ", typeof friends);
-
-        // Verifica se l'utente sta cercando di seguire se stesso
-        if (_id === storedUserId) {
-          toast.warn("You cannot follow yourself!", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          return; // Interrompi l'esecuzione della funzione
-        }
 
         // Verifica se l'amico è già presente nell'array degli amici dell'utente
         let isFriendAlreadyAdded = false;
@@ -208,6 +193,100 @@ const OtherProfile = () => {
     }
   };
 
+  const unfollow = async () => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedUserToken = localStorage.getItem("token");
+    setLoading(true);
+
+    try {
+      // Ottieni gli amici dell'utente loggato dal backend
+      const userResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + storedUserToken,
+          },
+        }
+      );
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        console.log("userData is: ", typeof userData);
+        const userFriends = userData.friendId || []; // Array degli amici dell'utente
+
+        console.log("friends is: ", typeof friends);
+
+        // Verifica se l'amico è già presente nell'array degli amici dell'utente
+        let isFriendAlreadyAdded = true;
+
+        for (const userObj of userFriends) {
+          for (const key in userObj) {
+            if (userObj.hasOwnProperty(key) && userObj[key] === _id) {
+              isFriendAlreadyAdded = true;
+              break;
+            }
+          }
+        }
+
+        if (isFriendAlreadyAdded) {
+          // Aggiungi l'amico all'array degli amici dell'utente
+          const newFriend = [...userFriends];
+          newFriend.splice(_id);
+
+          // Invia la richiesta di aggiornamento degli amici dell'utente al backend
+          const updateResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + storedUserToken,
+              },
+              method: "PUT",
+              body: JSON.stringify({ friendId: newFriend }),
+            }
+          );
+
+          if (updateResponse.ok) {
+            // Aggiungi l'amico all'array degli amici utilizzando push
+            setFriend(newFriend);
+            setIsFollowing(true);
+            setFriendId(_id);
+          }
+
+          toast("You're not following them anymore!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setTimeout(() => {
+            window.location.href = `/users/${_id}`;
+          }, 2000);
+        } else {
+          // L'amico è già presente nell'array degli amici dell'utente
+          toast.warn("You're already following them!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -233,13 +312,14 @@ const OtherProfile = () => {
                 <Button
                   className="font-face-CinzelDecorative align-self-center"
                   variant="dark"
+                  onClick={isFollowing ? null : () => unfollow(_id)}
                 >
-                  Unfollow
+                  {isFollowing ? "Follow" : "Unfollow"}
                 </Button>
               ) : (
                 <Button
                   className="buttonAggiungi font-face-CinzelDecorative align-self-center"
-                  onClick={isFollowing ? null : () => segui(_id)}
+                  onClick={isFollowing ? null : () => follow(_id)}
                 >
                   {isFollowing ? "Unfollow" : "Follow"}
                 </Button>

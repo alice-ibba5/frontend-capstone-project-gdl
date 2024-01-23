@@ -66,6 +66,7 @@ const GDSeriesDetails = ({}) => {
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [books, setBooks] = useState([]);
   const [gdlXPut, setGdlXPut] = useState("");
+  const [booksDetails, setBooksDetails] = useState("");
 
   const getGDSeries = async () => {
     try {
@@ -102,6 +103,18 @@ const GDSeriesDetails = ({}) => {
         books: data?.books || "",
         category: data?.category || "",
       });
+
+      // Ottieni i dettagli completi dei libri
+      const bookDetailsPromises = data?.books?.map(async (bookId) => {
+        const bookResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${bookId}`
+        );
+        const bookData = await bookResponse.json();
+        return bookData;
+      });
+
+      const bookDetails = await Promise.all(bookDetailsPromises);
+      setBooksDetails(bookDetails);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -651,7 +664,7 @@ const GDSeriesDetails = ({}) => {
         <>
           <Container>
             <h1 className="blog-details-title font-face-CinzelDecorative mt-3">
-              {gdlGet?.bookTitle}
+              {gdlGet?.title}
             </h1>
             <Container className="blog-details-root d-flex p-0">
               <Container className="p-0">
@@ -856,6 +869,37 @@ const GDSeriesDetails = ({}) => {
                     </Button>
                   </Modal.Footer>
                 </Modal>
+                <hr></hr>
+
+                <div className="d-flex flex-column align-items-center">
+                  <h4 className="font-face-CinzelDecorative align-self-center">
+                    Path to follow:
+                  </h4>
+                  {Array.isArray(booksDetails) &&
+                    booksDetails.map((gdl, index) => (
+                      <>
+                        <Col lg={3}>
+                          <Link
+                            to={`/gdl/${gdl._id}`}
+                            className="gdl-link align-self-center"
+                          >
+                            <Image
+                              className="cover align-self-center my-3"
+                              src={gdl?.cover}
+                              fluid
+                              style={{ width: "100px" }}
+                            />
+                          </Link>
+                          <p
+                            className="align-self-center font-face-CinzelDecorative"
+                            key={index}
+                          >
+                            {gdl?.bookTitle}
+                          </p>
+                        </Col>
+                      </>
+                    ))}
+                </div>
               </Col>
             </Container>
 
