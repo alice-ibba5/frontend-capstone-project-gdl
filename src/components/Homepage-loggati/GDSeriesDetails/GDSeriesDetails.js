@@ -100,20 +100,36 @@ const GDSeriesDetails = ({}) => {
       // Aggiorna editFormData con i nuovi dati da gdlGet
       setEditFormData({
         title: data?.title || "",
-        books: data?.books || "",
+        booksId: data?.booksId || "",
         category: data?.category || "",
       });
 
       // Ottieni i dettagli completi dei libri
-      const bookDetailsPromises = data?.books?.map(async (bookId) => {
-        const bookResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${bookId}`
-        );
-        const bookData = await bookResponse.json();
-        return bookData;
+      const bookDetailsPromises = data?.booksId?.map(async (bookId) => {
+        try {
+          console.log("bookId:", bookId); // Aggiunto per stampare bookId nella console
+
+          // Assicurati che bookId sia una stringa valida prima di utilizzarlo nella richiesta
+          const stringBookId = bookId._id;
+
+          const bookResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${stringBookId}`
+          );
+
+          if (!bookResponse.ok) {
+            throw new Error(`HTTP error! Status: ${bookResponse.status}`);
+          }
+
+          const bookData = await bookResponse.json();
+          return bookData;
+        } catch (error) {
+          console.error(`Error fetching book details:`, error);
+          throw error;
+        }
       });
 
       const bookDetails = await Promise.all(bookDetailsPromises);
+      console.log("bookDetails:", bookDetails);
       setBooksDetails(bookDetails);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -518,7 +534,9 @@ const GDSeriesDetails = ({}) => {
   const [editFormData, setEditFormData] = useState({
     title: gdlGet?.title || "",
     category: gdlGet?.category || "",
-    books: gdlGet?.books ? convertStringsToObjectIdArray(gdlGet.books) : [],
+    booksId: gdlGet?.booksId
+      ? convertStringsToObjectIdArray(gdlGet.booksId)
+      : [],
   });
 
   const handleEditFormDataChange = (field, value) => {
@@ -540,7 +558,7 @@ const GDSeriesDetails = ({}) => {
       user: user,
       category: editFormData.category,
       title: editFormData.title,
-      books: editFormData.books,
+      booksId: editFormData.booksId,
     };
 
     try {
@@ -652,7 +670,7 @@ const GDSeriesDetails = ({}) => {
 
     setEditFormData((prevData) => ({
       ...prevData,
-      books: convertStringsToObjectIdArray(selectedOptions),
+      booksId: convertStringsToObjectIdArray(selectedOptions),
     }));
   };
 
@@ -800,7 +818,10 @@ const GDSeriesDetails = ({}) => {
                       aria-label="Default select example"
                       multiple={true}
                       className="mt-3 mx-3 p-0"
-                      value={editFormData.books.map((book) => book._id)}
+                      value={
+                        Array.isArray(editFormData) &&
+                        editFormData?.booksId.map((book) => book._id)
+                      }
                       onChange={handleSelectChange}
                       style={{ width: "94%" }}
                     >
@@ -879,42 +900,47 @@ const GDSeriesDetails = ({}) => {
                     Path to follow:
                   </h4>
                   {Array.isArray(booksDetails) &&
-                    booksDetails.map((gdl, index) => (
-                      <>
-                        <div className="d-flex mt-3">
-                          <Col lg={3}>
-                            <Link
-                              to={`/gdl/${gdl._id}`}
-                              className="gdl-link align-self-center"
-                            >
-                              <Image
-                                className="cover align-self-center my-3 cover"
-                                id="cover"
-                                src={gdl?.cover}
-                                fluid
-                                style={{ width: "400px" }}
-                              />
-                            </Link>
-                            <p
-                              className="align-self-center font-face-CinzelDecorative"
-                              id="scritta"
-                              key={index}
-                              style={{ width: "100px" }}
-                            >
-                              {gdl?.bookTitle}
-                            </p>
-                          </Col>
-                          <Col lg={3} className="ms-3 mt-3" id="deadline">
-                            <div>
-                              <p className="font-face-CinzelDecorative">
-                                Deadline:{" "}
-                              </p>
-                              <p>{gdl?.deadline}</p>
+                    booksDetails?.map(
+                      (gdl, index) => (
+                        console.log("booksDetails:", booksDetails),
+                        (
+                          <>
+                            <div className="d-flex mt-3">
+                              <Col lg={3}>
+                                <Link
+                                  to={`/gdl/${gdl?._id}`}
+                                  className="gdl-link align-self-center"
+                                >
+                                  <Image
+                                    className="cover align-self-center my-3 cover"
+                                    id="cover"
+                                    src={gdl?.cover}
+                                    fluid
+                                    style={{ width: "400px" }}
+                                  />
+                                </Link>
+                                <p
+                                  className="align-self-center font-face-CinzelDecorative"
+                                  id="scritta"
+                                  key={index}
+                                  style={{ width: "100px" }}
+                                >
+                                  {gdl?.bookTitle}
+                                </p>
+                              </Col>
+                              <Col lg={3} className="ms-3 mt-3" id="deadline">
+                                <div>
+                                  <p className="font-face-CinzelDecorative">
+                                    Deadline:{" "}
+                                  </p>
+                                  <p>{gdl?.deadline}</p>
+                                </div>
+                              </Col>
                             </div>
-                          </Col>
-                        </div>
-                      </>
-                    ))}
+                          </>
+                        )
+                      )
+                    )}
                 </div>
               </Col>
             </Container>
