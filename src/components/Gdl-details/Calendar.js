@@ -332,7 +332,7 @@ const CalendarElement = () => {
                   value={eventName}
                   onChange={Event_Data_Update}
                 />{" "}
-                <button className="create-btn" onClick={Create_Event_Fun}>
+                <button className="create-btn mt-3" onClick={Create_Event_Fun}>
                   Add Event{" "}
                 </button>{" "}
               </Col>

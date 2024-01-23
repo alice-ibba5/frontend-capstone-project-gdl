@@ -15,6 +15,12 @@ const Gdl = (props) => {
           className="gdl-cover"
           style={{ width: "200px" }}
         />
+        <div
+          className="gdl-background"
+          style={{
+            backgroundImage: `url(${cover})`,
+          }}
+        ></div>
         <Card.Body>
           <Card.Title className="font-face-CinzelDecorative">
             {bookTitle}

@@ -734,7 +734,7 @@ const GDSeriesDetails = ({}) => {
                 {gdls && gdls.some((gdl) => gdl._id === id) ? (
                   <Button
                     variant="dark"
-                    className="font-face-CinzelDecorative align-self-center partecipiGià"
+                    className="font-face-CinzelDecorative align-self-center partecipiGià mt-3"
                     disabled
                   >
                     Already joined
@@ -742,7 +742,7 @@ const GDSeriesDetails = ({}) => {
                 ) : (
                   <Button
                     variant="dark"
-                    className="font-face-CinzelDecorative align-self-center"
+                    className="font-face-CinzelDecorative align-self-center mt-3"
                     onClick={() => {
                       if (!isFollowing) {
                         partecipaAlGdl(id);
@@ -757,7 +757,7 @@ const GDSeriesDetails = ({}) => {
 
                 <Button
                   variant="dark"
-                  className="font-face-CinzelDecorative align-self-center editGdl mx-3"
+                  className="font-face-CinzelDecorative align-self-center editGdl mx-3 mt-3"
                   onClick={handleShow4}
                 >
                   Edit
@@ -840,7 +840,7 @@ const GDSeriesDetails = ({}) => {
 
                 <Button
                   variant="danger"
-                  className="font-face-CinzelDecorative align-self-center"
+                  className="font-face-CinzelDecorative align-self-center mt-3"
                   onClick={handleShow5}
                 >
                   Delete

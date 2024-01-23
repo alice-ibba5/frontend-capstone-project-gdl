@@ -4,6 +4,7 @@
 
 .gdl-card {
     box-shadow: 5px 5px 15px 5px #696969;
+    background-color: transparent; 
 }
 
 .gdl-card:hover {
@@ -28,3 +29,31 @@
     }
     
 }
+
+.gdl-card {
+    position: relative;
+    width: 200px;
+    height: 550px;
+  }
+  
+  .gdl-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    z-index: -1;
+    opacity: 0.1
+  }
+  
+  .gdl-background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    opacity: 0.8; /* Modifica il valore di opacità a tuo piacimento (0.0 - 1.0) */
+  }
