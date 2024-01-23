@@ -10,10 +10,22 @@
     left: 20%;
     transform: translate(-50%, -50%);
     width: 2px;
-    height: 90%;
+    height: 95%;
     background-color: #000; /* Change color as needed */
     z-index: -1;
   }
   
- 
+  @media only screen and (max-width: 600px) {
+    #contenitore::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 60%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 95%;
+        background-color: #000; /* Change color as needed */
+        z-index: -1;
+      }
+  }
   

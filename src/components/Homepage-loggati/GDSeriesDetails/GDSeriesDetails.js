@@ -881,7 +881,7 @@ const GDSeriesDetails = ({}) => {
                   {Array.isArray(booksDetails) &&
                     booksDetails.map((gdl, index) => (
                       <>
-                        <div className="d-flex ">
+                        <div className="d-flex mt-3">
                           <Col lg={3}>
                             <Link
                               to={`/gdl/${gdl._id}`}
@@ -904,7 +904,7 @@ const GDSeriesDetails = ({}) => {
                               {gdl?.bookTitle}
                             </p>
                           </Col>
-                          <Col lg={3} className="ms-3" id="deadline">
+                          <Col lg={3} className="ms-3 mt-3" id="deadline">
                             <div>
                               <p className="font-face-CinzelDecorative">
                                 Deadline:{" "}
