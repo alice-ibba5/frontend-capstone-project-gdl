@@ -379,9 +379,9 @@ const GDSeriesDetails = ({}) => {
             theme: "dark",
           });
 
-          //   setTimeout(() => {
-          //     window.location.href = `/gdSeries/${id}`;
-          //   }, 2000);
+          setTimeout(() => {
+            window.location.href = `/gdSeries/${id}`;
+          }, 2000);
           console.log("GDSeries added to your dashboard successfully!");
         } else {
           // Il gdSeries è già presente nell'array dei gdl dell'utente
