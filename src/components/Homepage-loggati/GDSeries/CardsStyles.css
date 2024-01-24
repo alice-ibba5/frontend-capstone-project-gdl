@@ -58,3 +58,8 @@
     background-size: cover;
     opacity: 0.8; /* Modifica il valore di opacità a tuo piacimento (0.0 - 1.0) */
   }
+
+  .gdl-cover {
+    width: 200px;
+    height: 300px !important;
+  }

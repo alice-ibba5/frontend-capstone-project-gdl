@@ -9,12 +9,7 @@ const Gdl = (props) => {
   return (
     <Link to={`/gdl/${_id}`} className="gdl-link">
       <Card className="gdl-card" style={{ width: "200px", height: "550px" }}>
-        <Card.Img
-          variant="top"
-          src={cover}
-          className="gdl-cover"
-          style={{ width: "200px" }}
-        />
+        <Card.Img variant="top" src={cover} className="gdl-cover" />
         <div
           className="gdl-background"
           style={{

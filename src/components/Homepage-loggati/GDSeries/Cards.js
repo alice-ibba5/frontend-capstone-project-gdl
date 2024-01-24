@@ -21,12 +21,7 @@ const GdSeries = (props) => {
             backgroundImage: `url(${cover})`,
           }}
         ></div>
-        <Card.Img
-          variant="top"
-          src={cover}
-          className="gdl-cover"
-          style={{ width: "200px" }}
-        />
+        <Card.Img variant="top" src={cover} className="gdl-cover" />
         <Card.Body>
           <Card.Title className="font-face-CinzelDecorative">
             {title}

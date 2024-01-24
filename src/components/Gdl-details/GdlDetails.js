@@ -472,6 +472,170 @@ const GdlDetails = ({}) => {
     }
   };
 
+  const leaveTheGdl = async () => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedUserToken = localStorage.getItem("token");
+    setLoading(true);
+
+    try {
+      // Ottieni i gdl dell'utente dal backend
+      const userResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + storedUserToken,
+          },
+        }
+      );
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        const userGdl = userData.gdlId || []; // Array dei gdl dell'utente
+        setGdls(userGdl);
+        console.log("userGdl is: ", userGdl);
+
+        // Verifica se il gdl è già presente nell'array dei gdl dell'utente
+        const isGdlAlreadyAdded = userGdl.some((gdlId) => gdlId === id);
+
+        console.log("isGdlAlreadyAdded:", isGdlAlreadyAdded);
+        if (!isGdlAlreadyAdded) {
+          // Aggiungi il gdSeries all'array dei gdSeries dell'utente
+          const newGdl = userGdl.filter((gdlId) => gdlId !== id);
+          newGdl.splice(id);
+
+          // Invia la richiesta di aggiornamento dei gdl dell'utente al backend
+          const updateResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + storedUserToken,
+              },
+              method: "PUT",
+              body: JSON.stringify({ gdlId: newGdl }),
+            }
+          );
+
+          if (updateResponse.ok) {
+            // Aggiungi il gdl all'array events utilizzando push
+            setGdl(newGdl);
+            setGdlId(id);
+            setIsFollowing(true);
+          }
+
+          toast("Gdl left successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          setTimeout(() => {
+            window.location.href = `/gdl/${id}`;
+          }, 2000);
+        } else {
+          // Il gdl è già presente nell'array dei gdl dell'utente
+          toast.warn("Gdl is already left!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      } else {
+      }
+
+      /*INIZIA PROVA AGGIUNTA UTENTE CHE PARTECIPA AL GDL */
+      // Ottieni gli utenti che partecipano al gdl dal backend
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`
+      );
+
+      if (response.ok) {
+        const gdlData = await response.json();
+        console.log(gdlData);
+        const gdlUser = gdlData.userId || []; // Array dei gdl dell'utente
+        console.log(gdlUser);
+
+        // Verifica se l'utente è già presente nell'array degli utenti del gdl
+        const userIndexToRemove = gdlUser.findIndex((userObj) => {
+          for (const key in userObj) {
+            if (userObj.hasOwnProperty(key) && userObj[key] === storedUserId) {
+              return true;
+            }
+          }
+          return false;
+        });
+
+        if (userIndexToRemove !== -1) {
+          // Rimuovi l'utente dall'array degli utenti del gdSeries
+          const newUser = [...gdlUser];
+          newUser.splice(userIndexToRemove, 1);
+
+          // Invia la richiesta di aggiornamento degli utenti del gdl al backend
+          const updatedResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdl/${id}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              method: "PUT",
+              body: JSON.stringify({ userId: newUser }),
+            }
+          );
+
+          if (updatedResponse.ok) {
+            // Aggiungi il gdl all'array events utilizzando push
+            setUser(newUser);
+            setIsFollowing(false);
+            setUserId(storedUserId);
+          }
+
+          toast("User removed from the gdl dashboard successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          setTimeout(() => {
+            window.location.href = `/gdl/${id}`;
+          }, 2000);
+        } else {
+          // L'utente è già presente nell'array dei gdl dell'utente
+          toast.warn("User is already removed from the gdl dashboard!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      } else {
+      }
+      /*FINE PROVA */
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const editCover = async () => {
     const formData = new FormData();
     formData.append("cover", file, "cover");
@@ -724,9 +888,9 @@ const GdlDetails = ({}) => {
                     <Button
                       variant="dark"
                       className="font-face-CinzelDecorative align-self-center partecipiGià"
-                      disabled
+                      onClick={isFollowing ? null : () => leaveTheGdl(id)}
                     >
-                      Already joined
+                      {isFollowing ? "Join the GDL" : "Leave the GDL"}
                     </Button>
                   ) : (
                     <Button
@@ -734,7 +898,7 @@ const GdlDetails = ({}) => {
                       className="font-face-CinzelDecorative align-self-center"
                       onClick={isFollowing ? null : () => partecipaAlGdl(id)}
                     >
-                      Join the GDL!
+                      {isFollowing ? "Leave the GDL" : "Join the GDL"}
                     </Button>
                   )}
 

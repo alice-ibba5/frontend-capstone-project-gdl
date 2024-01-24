@@ -315,7 +315,6 @@ const GDSeriesDetails = ({}) => {
   };
 
   const partecipaAlGdl = async () => {
-    console.log("Cliccato sul pulsante 'Join the GDSeries'");
     const storedUserId = localStorage.getItem("userId");
     const storedUserToken = localStorage.getItem("token");
     setLoading(true);
@@ -382,10 +381,9 @@ const GDSeriesDetails = ({}) => {
           setTimeout(() => {
             window.location.href = `/gdSeries/${id}`;
           }, 2000);
-          console.log("GDSeries added to your dashboard successfully!");
         } else {
           // Il gdSeries è già presente nell'array dei gdl dell'utente
-          console.log("GDSeries is already added to your dashboard!");
+
           toast.warn("GDSeries is already added to your dashboard!", {
             position: "bottom-right",
             autoClose: 5000,
@@ -496,6 +494,172 @@ const GDSeriesDetails = ({}) => {
     }
   };
 
+  const leaveTheGdl = async () => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedUserToken = localStorage.getItem("token");
+    setLoading(true);
+
+    try {
+      // Ottieni i gdSeries dell'utente dal backend
+      const userResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + storedUserToken,
+          },
+        }
+      );
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        const userGdl = userData.gdSeriesId || []; // Array dei gdSeries dell'utente
+        setGdls(userGdl);
+        console.log("userGdl is: ", userGdl);
+
+        // Verifica se il gdSeries è già presente nell'array dei gdSeries dell'utente
+        const isGdlAlreadyAdded = userGdl.some(
+          (gdSeriesId) => gdSeriesId === id
+        );
+
+        console.log("isGdlAlreadyAdded:", isGdlAlreadyAdded);
+        if (!isGdlAlreadyAdded) {
+          // Aggiungi il gdSeries all'array dei gdSeries dell'utente
+          const newGdl = userGdl.filter((gdSeriesId) => gdSeriesId !== id);
+          newGdl.splice(id);
+
+          // Invia la richiesta di aggiornamento dei gdSeries dell'utente al backend
+          const updateResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + storedUserToken,
+              },
+              method: "PUT",
+              body: JSON.stringify({ gdSeriesId: newGdl }),
+            }
+          );
+
+          if (updateResponse.ok) {
+            // Aggiungi il gdSeries all'array events utilizzando push
+            setGdl(newGdl);
+            setGdlId(id);
+            setIsFollowing(true);
+          }
+
+          toast("GDSeries left successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          setTimeout(() => {
+            window.location.href = `/gdSeries/${id}`;
+          }, 2000);
+        } else {
+          // Il gdSeries è già presente nell'array dei gdl dell'utente
+
+          toast.warn("GDSeries is already left!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      } else {
+      }
+
+      /*INIZIA PROVA AGGIUNTA UTENTE CHE PARTECIPA AL GDL */
+      // Ottieni gli utenti che partecipano al gdSeries dal backend
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}`
+      );
+
+      if (response.ok) {
+        const gdlData = await response.json();
+
+        const gdlUser = gdlData.userId || []; // Array dei gdSeries dell'utente
+
+        // Verifica se l'utente è già presente nell'array degli utenti del gdSeries
+        const userIndexToRemove = gdlUser.findIndex((userObj) => {
+          for (const key in userObj) {
+            if (userObj.hasOwnProperty(key) && userObj[key] === storedUserId) {
+              return true;
+            }
+          }
+          return false;
+        });
+
+        if (userIndexToRemove !== -1) {
+          // Rimuovi l'utente dall'array degli utenti del gdSeries
+          const newUser = [...gdlUser];
+          newUser.splice(userIndexToRemove, 1);
+
+          // Invia la richiesta di aggiornamento degli utenti del gdSeries al backend
+          const updatedResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/gdSeries/${id}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              method: "PUT",
+              body: JSON.stringify({ userId: newUser }),
+            }
+          );
+
+          if (updatedResponse.ok) {
+            // Aggiungi il gdSeries all'array dei gdSeries utilizzando push
+            setUser(newUser);
+            setIsFollowing(false);
+            setUserId(storedUserId);
+          }
+
+          toast("User removed from the GDSeries dashboard successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          setTimeout(() => {
+            window.location.href = `/gdSeries/${id}`;
+          }, 2000);
+        } else {
+          // L'utente è già presente nell'array dei gdSeries dell'utente
+          toast.warn("User is already removed the GDSeries dashboard!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      } else {
+      }
+      /*FINE PROVA */
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const editCover = async () => {
     const formData = new FormData();
     formData.append("cover", file, "cover");
@@ -537,6 +701,7 @@ const GDSeriesDetails = ({}) => {
     booksId: gdlGet?.booksId
       ? convertStringsToObjectIdArray(gdlGet.booksId)
       : [],
+    selectedBooks: [], // New state for selected books
   });
 
   const handleEditFormDataChange = (field, value) => {
@@ -558,7 +723,7 @@ const GDSeriesDetails = ({}) => {
       user: user,
       category: editFormData.category,
       title: editFormData.title,
-      booksId: editFormData.booksId,
+      booksId: editFormData.selectedBooks,
     };
 
     try {
@@ -574,7 +739,11 @@ const GDSeriesDetails = ({}) => {
       );
 
       if (textResponse.ok) {
-        setEditFormData(textData);
+        setEditFormData((prevData) => ({
+          ...prevData,
+          booksId: textData.booksId, // Update booksId with the new value
+        }));
+
         toast("GDSeries edited successfully!", {
           position: "bottom-right",
           autoClose: 5000,
@@ -666,11 +835,9 @@ const GDSeriesDetails = ({}) => {
       e.target.selectedOptions,
       (option) => option.value
     );
-    setSelectedBooks(selectedOptions);
-
     setEditFormData((prevData) => ({
       ...prevData,
-      booksId: convertStringsToObjectIdArray(selectedOptions),
+      selectedBooks: selectedOptions,
     }));
   };
 
@@ -753,23 +920,17 @@ const GDSeriesDetails = ({}) => {
                   <Button
                     variant="dark"
                     className="font-face-CinzelDecorative align-self-center partecipiGià mt-3"
-                    disabled
+                    onClick={isFollowing ? null : () => leaveTheGdl(id)}
                   >
-                    Already joined
+                    {isFollowing ? "Join the GDSeries" : "Leave the GDSeries"}
                   </Button>
                 ) : (
                   <Button
                     variant="dark"
                     className="font-face-CinzelDecorative align-self-center mt-3"
-                    onClick={() => {
-                      if (!isFollowing) {
-                        partecipaAlGdl(id);
-                        setIsFollowing(true); // Imposta immediatamente isFollowing a true
-                      }
-                    }}
-                    disabled={isFollowing} // Disabilita il pulsante quando isFollowing è true
+                    onClick={isFollowing ? null : () => partecipaAlGdl(id)}
                   >
-                    {isFollowing ? "Already joined" : "Join the GDSeries"}
+                    {isFollowing ? "Leave the GDSeries" : "Join the GDSeries"}
                   </Button>
                 )}
 
@@ -818,10 +979,7 @@ const GDSeriesDetails = ({}) => {
                       aria-label="Default select example"
                       multiple={true}
                       className="mt-3 mx-3 p-0"
-                      value={
-                        Array.isArray(editFormData) &&
-                        editFormData?.booksId.map((book) => book._id)
-                      }
+                      value={editFormData.selectedBooks}
                       onChange={handleSelectChange}
                       style={{ width: "94%" }}
                     >
