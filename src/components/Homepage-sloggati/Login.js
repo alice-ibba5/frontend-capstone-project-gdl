@@ -154,7 +154,7 @@ function Login() {
         onClick={handleShow}
         className="font-face-CinzelDecorative"
       >
-        Log in
+        Login
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>

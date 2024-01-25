@@ -139,7 +139,7 @@ function Register() {
         onClick={handleShow}
         className="font-face-CinzelDecorative"
       >
-        Register
+        Sign up
       </Button>
 
       <Modal show={show} onHide={handleClose}>
