@@ -13,6 +13,7 @@ import Contatti from "./components/Homepage-loggati/Contatti/Contatti.js";
 import Profile from "./components/Homepage-loggati/Profile/Profile.js";
 import OtherProfile from "./components/Homepage-loggati/OtherProfile/OtherProfile.js";
 import PrivateRoute from "./PrivateRoute.js";
+import Prova3D from "./components/Homepage-sloggati/Prova3D.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
@@ -21,7 +22,7 @@ function App() {
 
   return (
     <Router>
-      <NavBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      {/* <NavBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} /> */}
       <Routes>
         <Route path="/" exact element={<HomeSlog />} />
         <Route
