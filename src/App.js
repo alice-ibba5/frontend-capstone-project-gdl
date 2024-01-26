@@ -24,7 +24,7 @@ function App() {
     <Router>
       {/* <NavBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} /> */}
       <Routes>
-        <Route path="/" exact element={<HomeSlog />} />
+        <Route path="/" exact element={<Prova3D />} />
         <Route
           path="/gdl"
           element={
