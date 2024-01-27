@@ -7,10 +7,16 @@ import {
   useFrame,
   useLoader,
 } from "react-three-fiber";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, useAnimations } from "@react-three/drei";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import Login from "./Login.js";
+import Register from "./Register.js";
+import "./styles.css";
+import { Link } from "react-router-dom";
+import { Container } from "react-bootstrap";
 
-const Prova3D = () => {
+const Prova3D = (props) => {
+  const { user, isLoggedIn } = props;
   extend({ OrbitControls });
 
   const CameraControls = () => {
@@ -30,8 +36,18 @@ const Prova3D = () => {
     textures,
     startAnimation,
     animationName,
+    onModelLoad,
   }) => {
-    const { scene, animations } = useGLTF(url);
+    const { nodes, materials, scene, animations } = useGLTF(
+      url,
+      null,
+      (anim) => {
+        // Questo callback viene chiamato quando le animazioni sono caricate
+        console.log("Animations loaded:", anim);
+      }
+    );
+    const { actions } = useAnimations(animations, nodes);
+    // console.log(`Animations for model ${id}:`, animations);
     const group = useRef();
     const mixer = useRef();
 
@@ -39,9 +55,7 @@ const Prova3D = () => {
       if (animations && animations.length > 0 && startAnimation) {
         mixer.current = new THREE.AnimationMixer(scene);
 
-        // Verifica se è specificato un nome di animazione
         if (animationName) {
-          // Trova l'animazione desiderata per nome
           const targetAnimation = animations.find(
             (anim) => anim.name === animationName
           );
@@ -58,7 +72,6 @@ const Prova3D = () => {
             );
           }
         } else {
-          // Avvia tutte le animazioni
           animations.forEach((clip) => {
             const action = mixer.current.clipAction(clip);
             action.reset();
@@ -67,15 +80,16 @@ const Prova3D = () => {
             action.play();
           });
         }
+        if (onModelLoad) {
+          // Chiamare la funzione del componente padre quando il modello è pronto
+          onModelLoad({ id, mixer: mixer.current });
+        }
 
         return () => {
           mixer.current.stopAllAction();
         };
       }
     }, [animations, scene, startAnimation, id, animationName]);
-
-    // Log information about the animations
-    console.log(`Animations for model ${id}:`, animations);
 
     useEffect(() => {
       if (scene) {
@@ -93,12 +107,6 @@ const Prova3D = () => {
             child.material.metalness = 0; // Disattiva metalness
             child.material.roughness = 1; // Disattiva roughness
             child.material.map = texture || null; // Imposta la texture o null se non è presente
-
-            if (texture) {
-              child.material.map.wrapS = THREE.RepeatWrapping;
-              child.material.map.wrapT = THREE.RepeatWrapping;
-              child.material.map.repeat.set(-200, -200); // Esempio di regolazione della ripetizione della texture
-            }
 
             child.material.needsUpdate = true;
           }
@@ -138,23 +146,31 @@ const Prova3D = () => {
   };
 
   const [modelReady, setModelReady] = useState(false);
-  const [libroRossoAction, setLibroRossoAction] = useState(null);
+  const [libroRossoMixer, setLibroRossoMixer] = useState(null);
 
-  const handleModelReady = ({ id, action }) => {
-    if (id === "libroRosso") {
+  const handleModelReady = ({ id, mixer }) => {
+    if (id === "libroRosso" && mixer instanceof THREE.AnimationMixer) {
       setModelReady(true);
-      setLibroRossoAction(action);
+      setLibroRossoMixer(mixer);
     }
   };
 
   useEffect(() => {
-    if (modelReady && libroRossoAction) {
-      libroRossoAction.reset().play();
+    if (modelReady && libroRossoMixer && libroRossoMixer._actions.length > 0) {
+      libroRossoMixer._actions[0].play();
     }
-  }, [modelReady, libroRossoAction]);
+  }, [modelReady, libroRossoMixer]);
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
+      {!user && !isLoggedIn ? (
+        <Container>
+          <Login />
+          <Register />
+        </Container>
+      ) : (
+        <Link to={`/gdl`} className="gdls-link"></Link>
+      )}
       <Canvas
         style={{ width: "100%", height: "100%" }}
         camera={{ position: [0, 0, 50], fov: 50 }}
@@ -172,7 +188,7 @@ const Prova3D = () => {
           scale={[20, 20, 20]}
           textures={textures}
           startAnimation={true}
-          onModelReady={handleModelReady}
+          onModelLoad={handleModelReady}
           animationName="book_animatedAction"
         />
         <Model
