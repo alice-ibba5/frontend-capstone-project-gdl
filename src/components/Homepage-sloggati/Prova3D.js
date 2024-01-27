@@ -341,6 +341,10 @@ const Prova3D = () => {
 
     // Aggiorna la canvas quando la scena cambia
     renderer.render(scene, camera);
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+    };
   };
 
   return (
