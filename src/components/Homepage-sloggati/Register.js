@@ -138,7 +138,6 @@ function Register() {
         variant="danger"
         onClick={handleShow}
         className="font-face-CinzelDecorative mt-3"
-        style={{ position: "absolute", top: 300, left: 800, zIndex: 100 }}
       >
         Sign up
       </Button>

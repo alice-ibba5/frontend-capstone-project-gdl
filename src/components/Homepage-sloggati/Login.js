@@ -153,7 +153,6 @@ function Login() {
         variant="dark"
         onClick={handleShow}
         className="font-face-CinzelDecorative"
-        style={{ position: "absolute", top: 200, left: 790, zIndex: 100 }}
       >
         Login
       </Button>

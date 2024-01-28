@@ -235,7 +235,15 @@ const Prova3D = (props) => {
   return (
     <div style={{ width: "100%", height: "100vh" }}>
       {!user && !isLoggedIn && showButtons ? (
-        <div id="pulsanti">
+        <div
+          id="pulsanti"
+          style={{
+            position: "absolute",
+            top: "50%", // Imposta la posizione verticale al centro
+            left: "50%", // Imposta la posizione orizzontale al centro
+            transform: "translate(-50%, -50%)", // Centra il contenuto
+          }}
+        >
           <Container>
             <Login />
             <Register />
