@@ -50,21 +50,31 @@ const Prova3D = (props) => {
 
     const animations = gltf.animations;
 
-    animations.forEach((animation) => {
-      const action = mixer.clipAction(animation);
+    useEffect(() => {
+      if (!animationStarted) {
+        animations.forEach((animation) => {
+          const action = mixer.clipAction(animation);
 
-      action.setLoop(THREE.LoopOnce);
-      action.clampWhenFinished = true;
+          action.setLoop(THREE.LoopOnce);
+          action.clampWhenFinished = true;
 
-      action.play();
-    });
+          action.play();
+        });
+      }
+    }, [animationStarted, animations, mixer]);
 
     useFrame(() => {
       if (!animationStarted) {
-        mixer.update(0.01); // Aggiorna manualmente il mixer solo se l'animazione non è ancora stata avviata
+        mixer.update(0.01);
         if (mixer.time >= mixer._actions[0]._clip.duration) {
-          onAnimationComplete(); // Richiama la funzione passata come prop
+          onAnimationComplete();
         }
+      }
+    });
+
+    useFrame((state, delta) => {
+      if (animationStarted) {
+        mixer.update(delta);
       }
     });
 
