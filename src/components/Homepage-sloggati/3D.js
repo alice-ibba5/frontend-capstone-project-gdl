@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useForceUpdate } from "react";
 import * as THREE from "three";
 import {
   Canvas,
@@ -30,13 +30,13 @@ const Prova3D = (props) => {
     return <orbitControls ref={controlsRef} args={[camera, gl.domElement]} />;
   };
 
-  const Libro = ({ textures, onAnimationComplete }) => {
+  const Libro = ({ onAnimationComplete, animationStarted }) => {
     const group = useRef();
     const gltf = useLoader(
       GLTFLoader,
       `${process.env.REACT_APP_BACKEND_ENDPOINT}/carica-modello`
     );
-    const mixer = new THREE.AnimationMixer(gltf.scene); // Non è necessario passare la scena
+    const mixer = new THREE.AnimationMixer(gltf.scene);
 
     const objectGltf = gltf.scene;
 
@@ -45,41 +45,30 @@ const Prova3D = (props) => {
       objectGltf.position.set(0, -11, 20);
     }
 
-    // Aggiungi l'oggetto alla scena principale usando useRef
-    const { scene, camera } = useThree();
-    useEffect(() => {
-      group.current = objectGltf;
-      scene.add(group.current);
-      return () => scene.remove(group.current);
-    }, [objectGltf, scene]);
+    const { scene } = useThree();
+    scene.add(objectGltf);
 
     const animations = gltf.animations;
+
     animations.forEach((animation) => {
       const action = mixer.clipAction(animation);
 
-      // Imposta il numero di ripetizioni a 1 (una volta)
       action.setLoop(THREE.LoopOnce);
-
-      // Fai in modo che l'animazione rimanga ferma al termine
       action.clampWhenFinished = true;
 
-      action.play(); // Avvia l'animazione
+      action.play();
     });
-    useFrame((state, delta) => mixer.update(delta));
 
     useFrame(() => {
-      if (group.current) {
-        const posY = group.current.position.y;
-
-        // Regola la soglia in base alla posizione desiderata per considerare l'animazione come terminata
-        if (posY < -10) {
-          // Animazione terminata
-          if (onAnimationComplete) {
-            onAnimationComplete();
-          }
+      if (!animationStarted) {
+        mixer.update(0.01); // Aggiorna manualmente il mixer solo se l'animazione non è ancora stata avviata
+        if (mixer.time >= mixer._actions[0]._clip.duration) {
+          onAnimationComplete(); // Richiama la funzione passata come prop
         }
       }
     });
+
+    useFrame((state, delta) => mixer.update(delta));
 
     useEffect(() => {
       if (gltf.scene) {
@@ -225,23 +214,17 @@ const Prova3D = (props) => {
 
   const [modelReady, setModelReady] = useState(false);
   const [libroRossoMixer, setLibroRossoMixer] = useState(null);
-
-  const handleModelReady = ({ id, mixer }) => {
-    if (id === "libroRosso" && mixer instanceof THREE.AnimationMixer) {
-      setModelReady(true);
-      setLibroRossoMixer(mixer);
-    }
-  };
-
-  const [animationFinished, setAnimationFinished] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
+  const [animationStarted, setAnimationStarted] = useState(false);
 
   const handleAnimationComplete = () => {
-    setAnimationFinished(true);
+    setShowButtons(true);
+    setAnimationStarted(true);
   };
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
-      {!user && !isLoggedIn && animationFinished ? (
+      {!user && !isLoggedIn && showButtons ? (
         <div id="pulsanti">
           <Container>
             <Login />
@@ -264,6 +247,7 @@ const Prova3D = (props) => {
         <Libro
           textures={textures}
           onAnimationComplete={handleAnimationComplete}
+          animationStarted={animationStarted}
         />
         <Libreria textures={textures} />
         <Libri textures={textures} />
