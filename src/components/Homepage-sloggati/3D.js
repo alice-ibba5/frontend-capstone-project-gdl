@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
 import "./3DStyles.css";
+import LibroAnimator from "./LIbroAnimator.js";
 
 const Prova3D = (props) => {
   const { user, isLoggedIn } = props;
@@ -226,11 +227,24 @@ const Prova3D = (props) => {
   const [libroRossoMixer, setLibroRossoMixer] = useState(null);
   const [showButtons, setShowButtons] = useState(false);
   const [animationStarted, setAnimationStarted] = useState(false);
+  const [animationTriggered, setAnimationTriggered] = useState(false);
 
   const handleAnimationComplete = () => {
     setShowButtons(true);
     setAnimationStarted(true);
   };
+
+  const handleLoginSubmit = () => {
+    console.log("Login button clicked");
+    setAnimationTriggered(true);
+  };
+
+  // Nasconde i pulsanti quando l'animazione di LibroAnimator inizia
+  useEffect(() => {
+    if (animationTriggered) {
+      setShowButtons(false);
+    }
+  }, [animationTriggered]);
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
@@ -245,7 +259,7 @@ const Prova3D = (props) => {
           }}
         >
           <Container>
-            <Login />
+            <Login onLoginSubmit={handleLoginSubmit} />
             <Register />
           </Container>
         </div>
@@ -266,6 +280,10 @@ const Prova3D = (props) => {
           textures={textures}
           onAnimationComplete={handleAnimationComplete}
           animationStarted={animationStarted}
+        />
+        <LibroAnimator
+          onAnimationComplete={() => setAnimationTriggered(false)}
+          animationStarted={animationTriggered}
         />
         <Libreria textures={textures} />
         <Libri textures={textures} />
