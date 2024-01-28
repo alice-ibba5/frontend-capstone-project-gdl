@@ -65,6 +65,7 @@ function NavBar({ searchQuery, setSearchQuery }) {
   return (
     <Navbar
       expand="lg"
+      id="navbar"
       className="bg-body-tertiary font-face-CinzelDecorative"
       sticky="top"
       style={{ height: "70px" }}

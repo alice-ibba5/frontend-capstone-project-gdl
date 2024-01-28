@@ -66,7 +66,7 @@ const Prova3D = (props) => {
     useFrame(() => {
       if (!animationStarted) {
         mixer.update(0.01);
-        if (mixer.time >= mixer._actions[0]._clip?.duration) {
+        if (mixer.time >= mixer._actions[0]?._clip.duration) {
           onAnimationComplete();
         }
       }
