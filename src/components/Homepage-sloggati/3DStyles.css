@@ -1,0 +1,6 @@
+#pulsanti {
+    position: absolute;
+    top: 200;
+    left: 200;
+    z-index: 100;
+}
