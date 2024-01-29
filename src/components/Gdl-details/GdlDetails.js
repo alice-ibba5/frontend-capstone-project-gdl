@@ -654,6 +654,16 @@ const GdlDetails = ({}) => {
 
         setFile(formData);
 
+        toast("Cover changed successfully!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
         setTimeout(() => {
           window.location.href = `/gdl/${id}`;
         }, 2000);

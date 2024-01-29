@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import CalendarElement from "../Profile/CalendarXProfile/CalendarXprofile.js";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { ToastContainer, toast } from "react-toastify";
 
 import "./styles.css";
 
@@ -19,6 +20,10 @@ const Profile = () => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,6 +60,47 @@ const Profile = () => {
     };
   }, [storedUserId, storedUserToken, isMounted]);
 
+  const editAvatar = async () => {
+    const formData = new FormData();
+    formData.append("avatar", file, "avatar");
+
+    try {
+      let fileResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_ENDPOINT}/api/users/${storedUserId}/avatar`,
+        {
+          method: "PATCH",
+          body: formData,
+        }
+      );
+
+      if (fileResponse.ok) {
+        const fileDataResponse = await fileResponse.json();
+
+        setFile(formData);
+
+        toast("Avatar changed successfully!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        setTimeout(() => {
+          window.location.href = `/users/me/${storedUserId}`;
+        }, 2000);
+      } else {
+        throw new Error(`HTTP error! Status: ${fileResponse.status}`);
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -66,13 +112,51 @@ const Profile = () => {
           </h1>
 
           <Container className="p-0 d-flex">
-            <Col lg={6} className="mt-4">
+            <Col lg={6} className="mt-4 d-flex flex-column">
               <Image
-                className="avatar align-item-center mb-5"
+                className="avatar align-item-center mb-2"
                 src={user.avatar}
                 fluid
                 style={{ width: "200px" }}
               />
+
+              <Button
+                variant="dark"
+                className="font-face-CinzelDecorative align-self-start mt-3"
+                onClick={handleShow2}
+              >
+                Edit Avatar
+              </Button>
+              <Modal show={show2} onHide={handleClose2}>
+                <Form className="mt-3" onSubmit={editAvatar}>
+                  <Form.Group className="mt-3 mx-3">
+                    <Form.Label>Cover</Form.Label>
+                    <div>
+                      <input
+                        type="file"
+                        multiple={false}
+                        onChange={(e) => setFile(e.target.files[0])}
+                      />
+                    </div>
+                  </Form.Group>
+                  <Modal.Footer>
+                    <Button
+                      variant="secondary"
+                      onClick={handleClose2}
+                      className="font-face-CinzelDecorative align-self-center"
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      variant="dark"
+                      className="font-face-CinzelDecorative"
+                      type="submit"
+                    >
+                      Save Changes
+                    </Button>
+                  </Modal.Footer>
+                </Form>
+              </Modal>
             </Col>
 
             <Col lg={6} className="">
@@ -225,6 +309,18 @@ const Profile = () => {
           <CalendarElement />
         </Container>
       )}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
   );
 };

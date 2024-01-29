@@ -15,8 +15,8 @@ function Login(props) {
   const handleShow = () => setShow(true);
 
   const [user, setUser] = useState(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("alice.monni@gmail.com");
+  const [password, setPassword] = useState("150988");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 

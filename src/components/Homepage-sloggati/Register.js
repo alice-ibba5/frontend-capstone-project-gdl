@@ -9,7 +9,7 @@ import queryString from "query-string";
 import "./styles.css";
 import "react-toastify/dist/ReactToastify.css";
 
-function Register() {
+function Register(props) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -132,6 +132,11 @@ function Register() {
     }
   };
 
+  const handleButtonClick = () => {
+    console.log("Login button clicked");
+    props.onLoginSubmit();
+  };
+
   return (
     <>
       <Button
@@ -238,6 +243,10 @@ function Register() {
                   marginLeft: "1em",
                 }}
                 className="font-face-CinzelDecorative"
+                onClick={() => {
+                  handleButtonClick();
+                  handleClose();
+                }}
               >
                 Invia
               </Button>

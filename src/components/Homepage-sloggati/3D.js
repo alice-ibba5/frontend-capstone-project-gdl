@@ -265,7 +265,7 @@ const Prova3D = (props) => {
         >
           <Container>
             <Login onLoginSubmit={handleLoginSubmit} />
-            <Register />
+            <Register onLoginSubmit={handleLoginSubmit} />
           </Container>
         </div>
       ) : (
