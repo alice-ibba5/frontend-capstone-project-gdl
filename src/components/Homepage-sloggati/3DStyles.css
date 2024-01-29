@@ -31,3 +31,13 @@
     color: black;
     font-weight: 900;
   }
+
+  @media only screen and (max-width: 768px) {
+  #container-pulsanti { 
+        flex-direction: row !important;
+  }}
+
+  @media screen and (max-width: 768px) {
+    .d-flex.align-items-center.container {
+    flex-direction: row !important;
+}}

@@ -272,7 +272,10 @@ const Prova3D = (props) => {
             transform: "translate(-50%, -50%)", // Centra il contenuto
           }}
         >
-          <Container className="d-flex align-items-center">
+          <Container
+            className="d-flex flex-row align-items-center"
+            id="container-pulsanti"
+          >
             <Login onLoginSubmit={handleLoginSubmit} />
             <Register onLoginSubmit={handleLoginSubmit} />
           </Container>
