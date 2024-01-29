@@ -175,13 +175,18 @@ const Prova3D = (props) => {
       return () => scene.remove(group.current);
     }, [objectGltf3, scene]);
 
+    const commonTexture = useLoader(
+      THREE.TextureLoader,
+      `${process.env.PUBLIC_URL}/models/texture-legno.jpg`
+    );
+
     useEffect(() => {
       if (gltf3.scene) {
         gltf3.scene.traverse((child) => {
           if (child.isMesh && child.material && child.material.name) {
             console.log("Materials 3 are: ", child.material.name);
-            const materialName = child.material.name.toLowerCase();
-            const texture = textures[materialName];
+            const materialName = child.material.name;
+            const texture = textures[commonTexture];
             const geometry = child.geometry;
 
             if (geometry.isBufferGeometry) {
@@ -191,19 +196,20 @@ const Prova3D = (props) => {
             child.material.emissive.setHex(0x000000); // Imposta emissive su nero
             child.material.metalness = 0; // Disattiva metalness
             child.material.roughness = 1; // Disattiva roughness
-            child.material.map = texture || null; // Imposta la texture o null se non è presente
+            child.material.map = commonTexture || null; // Imposta la texture o null se non è presente
             child.material.normalMap = normalMap;
             child.material.needsUpdate = true;
           }
         });
       }
-    }, [gltf3.scene, textures]);
+    }, [gltf3.scene, commonTexture]);
   };
 
   const normalMap = useLoader(
     THREE.TextureLoader,
     `${process.env.PUBLIC_URL}/models/normal.jpg`
   );
+
   const textures = {
     cover: useLoader(
       THREE.TextureLoader,
@@ -221,10 +227,9 @@ const Prova3D = (props) => {
       THREE.TextureLoader,
       `${process.env.PUBLIC_URL}/models/legno.jpg`
     ),
-    pelle: new THREE.TextureLoader().load("../../assets/pelle.jpg"),
     inner: useLoader(
       THREE.TextureLoader,
-      `${process.env.PUBLIC_URL}/models/book-side.jpg`
+      `${process.env.PUBLIC_URL}/models/pagina-libro.jpg`
     ),
   };
 
@@ -279,8 +284,8 @@ const Prova3D = (props) => {
           <CameraControls />
 
           <ambientLight intensity={0.5} />
-          {/* <pointLight position={[5, 20, 30]} castShadow /> */}
-          <directionalLight intensity={0.2} castShadow />
+          <pointLight position={[5, 20, 30]} castShadow />
+          <directionalLight intensity={2} castShadow />
 
           <Libro
             textures={textures}
