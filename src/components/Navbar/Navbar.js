@@ -13,11 +13,20 @@ import "./styles.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { startTransition } from "react";
 
 function NavBar({ searchQuery, setSearchQuery }) {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [logoutCompleted, setLogoutCompleted] = useState(false);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setUser(null);
+    setIsLoggedIn(false);
+    setLogoutCompleted(true);
+  };
 
   const isLogged = async () => {
     const storedUserId = localStorage.getItem("userId");
@@ -39,8 +48,7 @@ function NavBar({ searchQuery, setSearchQuery }) {
           setUser(userDetails);
           setIsLoggedIn(true);
         } else {
-          localStorage.clear();
-          window.location.href = "/";
+          handleLogout();
           toast("You need to login again!", {
             position: "bottom-right",
             autoClose: 5000,
@@ -62,9 +70,17 @@ function NavBar({ searchQuery, setSearchQuery }) {
     isLogged();
   }, []);
 
+  // Effettua la navigazione solo se l'utente è disconnesso
+  useEffect(() => {
+    if (!isLoggedIn && logoutCompleted) {
+      navigate("/", { replace: true }); // Sostituisci con la tua pagina di login
+    }
+  }, [isLoggedIn, logoutCompleted, navigate]);
+
   return (
     <Navbar
       expand="lg"
+      id="navbar"
       className="bg-body-tertiary font-face-CinzelDecorative"
       sticky="top"
       style={{ height: "70px" }}
@@ -116,10 +132,9 @@ function NavBar({ searchQuery, setSearchQuery }) {
                 variant="danger"
                 className="my-3 mx-3"
                 onClick={() => {
-                  navigate("/");
-                  localStorage.clear();
-                  setUser(false);
-                  setIsLoggedIn(false);
+                  startTransition(() => {
+                    handleLogout();
+                  });
                 }}
               >
                 Logout

@@ -9,7 +9,7 @@ import queryString from "query-string";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 
-function Login() {
+function Login(props) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -147,6 +147,11 @@ function Login() {
     GoogleCallbackComponent();
   }, []);
 
+  const handleButtonClick = () => {
+    console.log("Login button clicked");
+    props.onLoginSubmit();
+  };
+
   return (
     <>
       <Button
@@ -209,6 +214,10 @@ function Login() {
               variant="dark"
               type="submit"
               className="font-face-CinzelDecorative"
+              onClick={() => {
+                handleButtonClick();
+                handleClose();
+              }}
             >
               Login
             </Button>

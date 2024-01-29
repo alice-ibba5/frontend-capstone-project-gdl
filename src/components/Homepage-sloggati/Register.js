@@ -137,7 +137,7 @@ function Register() {
       <Button
         variant="danger"
         onClick={handleShow}
-        className="font-face-CinzelDecorative"
+        className="font-face-CinzelDecorative mt-3"
       >
         Sign up
       </Button>

@@ -13,6 +13,7 @@ import Contatti from "./components/Homepage-loggati/Contatti/Contatti.js";
 import Profile from "./components/Homepage-loggati/Profile/Profile.js";
 import OtherProfile from "./components/Homepage-loggati/OtherProfile/OtherProfile.js";
 import PrivateRoute from "./PrivateRoute.js";
+import Prova3D from "./components/Homepage-sloggati/3D.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
@@ -21,14 +22,18 @@ function App() {
 
   return (
     <Router>
-      <NavBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <Routes>
-        <Route path="/" exact element={<HomeSlog />} />
+        <Route path="/" exact element={<Prova3D />} />
         <Route
           path="/gdl"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <HomeLog searchQuery={searchQuery} />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -36,7 +41,12 @@ function App() {
           path="/gdseries"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <GDSeries />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -44,7 +54,12 @@ function App() {
           path="/chi-siamo"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <ChiSiamo />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -52,7 +67,12 @@ function App() {
           path="/contatti"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <Contatti />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -60,7 +80,12 @@ function App() {
           path="/nuova-proposta"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <NuovaProposta />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -68,7 +93,12 @@ function App() {
           path="/nuovo-gdseries"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <NuovoGDSeries />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -76,7 +106,12 @@ function App() {
           path="/gdl/:id"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <GdlDetails />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -84,7 +119,12 @@ function App() {
           path="/gdSeries/:id"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <GDSeriesDetails />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -92,7 +132,12 @@ function App() {
           path="/users/me/:id"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <Profile />
+              <Footer />
             </PrivateRoute>
           }
         />
@@ -100,12 +145,16 @@ function App() {
           path="/users/:_id"
           element={
             <PrivateRoute>
+              <NavBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
               <OtherProfile />
+              <Footer />
             </PrivateRoute>
           }
         />
       </Routes>
-      <Footer />
     </Router>
   );
 }
