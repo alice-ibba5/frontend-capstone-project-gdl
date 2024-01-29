@@ -8,7 +8,7 @@ import {
   useLoader,
 } from "react-three-fiber";
 import { useGLTF, useAnimations } from "@react-three/drei";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Login from "./Login.js";
 import Register from "./Register.js";
 import "./styles.css";
@@ -20,15 +20,15 @@ import LibroAnimator from "./LIbroAnimator.js";
 
 const Prova3D = (props) => {
   const { user, isLoggedIn } = props;
-  extend({ OrbitControls });
+  // extend({ OrbitControls });
 
   const CameraControls = () => {
     const { camera, gl } = useThree();
     const controlsRef = useRef();
 
-    useFrame(() => controlsRef.current.update());
+    // useFrame(() => controlsRef.current.update());
 
-    return <orbitControls ref={controlsRef} args={[camera, gl.domElement]} />;
+    // return <orbitControls ref={controlsRef} args={[camera, gl.domElement]} />;
   };
 
   const Libro = ({ onAnimationComplete, animationStarted }) => {
