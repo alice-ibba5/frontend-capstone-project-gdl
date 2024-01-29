@@ -179,6 +179,7 @@ const Prova3D = (props) => {
       if (gltf3.scene) {
         gltf3.scene.traverse((child) => {
           if (child.isMesh && child.material && child.material.name) {
+            console.log("Materials 3 are: ", child.material.name);
             const materialName = child.material.name.toLowerCase();
             const texture = textures[materialName];
             const geometry = child.geometry;
@@ -191,7 +192,7 @@ const Prova3D = (props) => {
             child.material.metalness = 0; // Disattiva metalness
             child.material.roughness = 1; // Disattiva roughness
             child.material.map = texture || null; // Imposta la texture o null se non è presente
-
+            child.material.normalMap = normalMap;
             child.material.needsUpdate = true;
           }
         });
@@ -199,6 +200,10 @@ const Prova3D = (props) => {
     }, [gltf3.scene, textures]);
   };
 
+  const normalMap = useLoader(
+    THREE.TextureLoader,
+    `${process.env.PUBLIC_URL}/models/normal.jpg`
+  );
   const textures = {
     cover: useLoader(
       THREE.TextureLoader,
@@ -266,28 +271,30 @@ const Prova3D = (props) => {
       ) : (
         <Link to={`/gdl`} className="gdls-link"></Link>
       )}
-      <Canvas
-        style={{ width: "100%", height: "100%" }}
-        camera={{ position: [0, 0, 54], fov: 50 }}
-      >
-        <CameraControls />
+      <div className="canvas-container">
+        <Canvas
+          style={{ width: "100%", height: "100%" }}
+          camera={{ position: [0, 0, 54], fov: 50 }}
+        >
+          <CameraControls />
 
-        <ambientLight intensity={1} />
-        <pointLight position={[5, 20, 30]} castShadow />
-        <directionalLight intensity={0.5} castShadow />
+          <ambientLight intensity={0.5} />
+          {/* <pointLight position={[5, 20, 30]} castShadow /> */}
+          <directionalLight intensity={0.2} castShadow />
 
-        <Libro
-          textures={textures}
-          onAnimationComplete={handleAnimationComplete}
-          animationStarted={animationStarted}
-        />
-        <LibroAnimator
-          onAnimationComplete={() => setAnimationTriggered(false)}
-          animationStarted={animationTriggered}
-        />
-        <Libreria textures={textures} />
-        <Libri textures={textures} />
-      </Canvas>
+          <Libro
+            textures={textures}
+            onAnimationComplete={handleAnimationComplete}
+            animationStarted={animationStarted}
+          />
+          <LibroAnimator
+            onAnimationComplete={() => setAnimationTriggered(false)}
+            animationStarted={animationTriggered}
+          />
+          <Libreria textures={textures} />
+          <Libri textures={textures} />
+        </Canvas>
+      </div>
     </div>
   );
 };
