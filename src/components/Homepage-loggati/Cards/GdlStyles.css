@@ -3,12 +3,15 @@
 }
 
 .gdl-card {
-    box-shadow: 5px 5px 15px 5px #696969;
+    
     background-color: transparent; 
+    position: relative;
+    width: 200px;
+    height: 550px;
 }
 
 .gdl-card:hover {
-    transform: scale(105%);
+    transform: scale(103%);
     height: 100%;
     z-index: 2;
     cursor: pointer;
@@ -30,12 +33,6 @@
     
 }
 
-.gdl-card {
-    position: relative;
-    width: 200px;
-    height: 550px;
-  }
-  
   .gdl-background {
     position: absolute;
     top: 0;

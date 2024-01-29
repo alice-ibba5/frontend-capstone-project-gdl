@@ -93,6 +93,10 @@ const Prova3D = (props) => {
               geometry.computeVertexNormals();
             }
 
+            if (materialName === "page" && texture) {
+              texture.repeat.set(1, 1); // Modifica i valori in base alle tue esigenze
+            }
+
             child.material.emissive.setHex(0x000000); // Imposta emissive su nero
             child.material.metalness = 0; // Disattiva metalness
             child.material.roughness = 1; // Disattiva roughness
@@ -263,12 +267,12 @@ const Prova3D = (props) => {
           id="pulsanti"
           style={{
             position: "absolute",
-            top: "50%", // Imposta la posizione verticale al centro
+            top: "25%", // Imposta la posizione verticale al centro
             left: "50%", // Imposta la posizione orizzontale al centro
             transform: "translate(-50%, -50%)", // Centra il contenuto
           }}
         >
-          <Container>
+          <Container className="d-flex align-items-center">
             <Login onLoginSubmit={handleLoginSubmit} />
             <Register onLoginSubmit={handleLoginSubmit} />
           </Container>

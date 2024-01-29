@@ -1,8 +1,10 @@
 #pulsanti {
-    position: absolute;
-    top: 200;
-    left: 200;
-    z-index: 100;
+    position: absolute !important;
+    display: flex !important;
+    top: "50%" !important;
+    left: "50%" !important;
+    transform: "translate(-50%, -50%)" !important;
+    z-index: 100 !important;
 }
 
 .canvas-container {
@@ -12,4 +14,20 @@
     background-size: cover;
     background-position: center;
     position: relative;
+  }
+
+  #login {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border-bottom: 1px solid black !important;
+    color: black;
+    font-weight: 900;
+  }
+
+  #signUp {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border-bottom: 1px solid black !important;
+    color: black;
+    font-weight: 900;
   }

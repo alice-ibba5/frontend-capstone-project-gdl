@@ -155,9 +155,9 @@ function Login(props) {
   return (
     <>
       <Button
-        variant="dark"
         onClick={handleShow}
         className="font-face-CinzelDecorative"
+        id="login"
       >
         Login
       </Button>

@@ -140,9 +140,9 @@ function Register(props) {
   return (
     <>
       <Button
-        variant="danger"
         onClick={handleShow}
         className="font-face-CinzelDecorative mt-3"
+        id="signUp"
       >
         Sign up
       </Button>
