@@ -8,6 +8,7 @@
     position: relative;
     width: 200px;
     height: 550px;
+    border-color: transparent;
 }
 
 .gdl-card:hover {
@@ -58,4 +59,8 @@
   .gdl-cover {
     width: 200px;
     height: 300px !important;
+  }
+
+  p {
+    margin-top: 10px !important;
   }

@@ -20,8 +20,8 @@ const Gdl = (props) => {
           <Card.Title className="font-face-CinzelDecorative">
             {bookTitle}
           </Card.Title>
-          <p>Deadline: {deadline}</p>
-          <p>
+          <p className="mt-1 mb-0">Deadline: {deadline}</p>
+          <p className="mt-0">
             Participants: <b>{userId.length}</b>
           </p>
         </Card.Body>

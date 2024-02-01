@@ -106,6 +106,7 @@ function NavBar({ searchQuery, setSearchQuery }) {
           <Form className="d-flex">
             <Form.Control
               type="search"
+              id="searchForm"
               placeholder="Search"
               className="me-2"
               aria-label="Search"

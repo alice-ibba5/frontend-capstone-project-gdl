@@ -28,5 +28,8 @@
     }
   }
   
-  
-  
+  #searchForm:focus {
+    border-color: #B68FB2 !important;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem #B68FB2 !important;
+}
