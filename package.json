@@ -36,7 +36,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "dist": "exit 0",
+    "build": "exit 0",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
    
     "start": "react-scripts start",
