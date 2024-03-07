@@ -14,8 +14,7 @@ import {
 import { PencilFill, Trash3 } from "react-bootstrap-icons";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import Creator from "../../../components/Homepage-loggati/Cards/Creator.js";
-import CalendarElement from "../../Gdl-details/Calendar.js";
-// import BlogLike from "../../components/likes/BlogLike";
+import CalendarElement from "../GDSeriesDetails/Calendar.js";
 import { ToastContainer, toast } from "react-toastify";
 
 const GDSeriesDetails = ({}) => {
