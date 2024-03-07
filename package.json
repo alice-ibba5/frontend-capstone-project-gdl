@@ -36,13 +36,12 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "exit 0",
+    "dist": "exit 0",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
+   
     "start": "react-scripts start",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "yarn build && netlify deploy --prod"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
