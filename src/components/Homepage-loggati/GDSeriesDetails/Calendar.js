@@ -3,7 +3,7 @@ import { Container, Col, Row, Image } from "react-bootstrap";
 import Calendar from "react-calendar";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "../../../node_modules/react-calendar/dist/Calendar.css";
+import "../../../../node_modules/react-calendar/dist/Calendar.css";
 import "./CalendarStyles.css";
 
 const CalendarElement = () => {
